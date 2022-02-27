@@ -19,5 +19,46 @@
 - 音の加工、ピッチの変更とかのライブラリを探る
 - 音の加工やピッチの変更を実際に行ってみる。
 
+# Pythonでマイクからの音声を取り込む
+## 実行環境
+- Python 3.9
+## SpeechRecognitionとPyaudioのinstall
+- SpeechRecognitionをpip経由でインストールする
+```
+pip install SpeechRecognition
+```
+- Python3.7~3.9だとPyaudioがpip経由でインストールできない。非公式版だが、下記URLからPython 3.9用 Pyaudio(PyAudio‑0.2.11‑cp39‑cp39‑win_amd64.whl)をダウンロードする
+- whlファイルがあるディレクトリでpip経由でインストールする
+```
+py -m pip install PyAudio-0.2.11-cp39-cp39-win_amd64.whl
+```
+## 実装したコード
+```
+import speech_recognition as sr
+import pyaudio
+
+if __name__ == "__main__": #importされた場合に実行しないようにするらしい
+    r = sr.Recognizer()
+    with sr.Microphone() as source: # pyaudioを使ってマイクを認識？
+        r.adjust_for_ambient_noise(source)
+        print("音声を読み取っています")
+        audio = r.listen(source)
+        try:
+            query = r.recognize_google(audio, language='ja-JP')
+            print(query)
+        except:
+            print("エラー")
+
+```
+## 実行結果
+- こんにちはといった場合<br>
+
+![picture 1](images/a35dcf4658d7e437931abd0d093210c412e8b14be3bb8d644c8472fcaef4032c.png)  
+- 
+
+## 参考資料
+- Pythonでマイクを用いた音声認識を行う
+    - https://heartstat.net/2021/05/27/python_speech_recognition/
+    - http://xn--u9j207iixgbigp2p.xn--tckwe/archives/10584
 
 
