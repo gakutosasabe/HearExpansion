@@ -13,16 +13,17 @@
         - Add Python 3.x to PATH を忘れないこと
     - pip → 3.9.1にすでに入っているのでインストール不要
 - Pythonでマイクからの音声を取り込む - SSB
-- Speech Recognitionを使って文字起こししてみる - SSB
+- Speech Recognitionを使って文字起こししてみる - SSB(完了)
     - https://self-development.info/python%E3%81%A7%E9%9F%B3%E5%A3%B0%E3%81%8B%E3%82%89%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%81%B8%E5%A4%89%E6%8F%9B%E3%80%90speechrecognition%E3%80%91/
 - 文字起こしの結果から、音声のフィードバックの仕方を変化させてみる
 - 音の加工、ピッチの変更とかのライブラリを探る
 - 音の加工やピッチの変更を実際に行ってみる。
 
-# Pythonでマイクからの音声を取り込む
-## 実行環境
+# 開発メモ
+## Speech Recognitionを使って文字起こしをする
+### 実行環境
 - Python 3.9
-## SpeechRecognitionとPyaudioのinstall
+### SpeechRecognitionとPyaudioのinstall
 - SpeechRecognitionをpip経由でインストールする
 ```
 pip install SpeechRecognition
@@ -32,7 +33,7 @@ pip install SpeechRecognition
 ```
 py -m pip install PyAudio-0.2.11-cp39-cp39-win_amd64.whl
 ```
-## 実装したコード
+### 実装したコード
 ```
 import speech_recognition as sr
 import pyaudio
@@ -50,15 +51,24 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
             print("エラー")
 
 ```
-## 実行結果
+### 実行結果
 - こんにちはといった場合<br>
-
 ![picture 1](images/a35dcf4658d7e437931abd0d093210c412e8b14be3bb8d644c8472fcaef4032c.png)  
-- 
-
-## 参考資料
+- こんにちは私の名前は佐々部岳人ですといった場合
+![picture 3](images/736d4d91efd984bcc42dac0261dc752970e36e29cda41e0195201f8e58608918.png) 
+### まとめ
+- そこそこの精度は出る。
+- マイク入力の終わりを指定してないけど、何故か音声の終わりは検知している
+### 参考資料
 - Pythonでマイクを用いた音声認識を行う
     - https://heartstat.net/2021/05/27/python_speech_recognition/
     - http://xn--u9j207iixgbigp2p.xn--tckwe/archives/10584
 
+## Pythonでマイクからの音声を取り込んでスピーカーに流す
+### Pyaudioを使ってマイクから入力した音声をそのまま流す
+- Pyaudioを使えばマイクからの音の入力を並列処理できるということらしい。常にマイクから音を取り続けていることが必要なので、スレッドを作ってそちらで常に処理を行っておく必要があるがPyaudioのノンブロッキングモードを使えば勝手にPyaudioでThreadを作ってくれて実行してくれるようだ。
+- んで、音が入力されたときに呼び出されるCallBack関数を定義しておけば、ほかの処理と並列処理できるというわけだ。
+
+### 参考資料 - pyAudioを使ってできるっぽい
+- https://ensekitt.hatenablog.com/entry/2018/09/07/200000
 

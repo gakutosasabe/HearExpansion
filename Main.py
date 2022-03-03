@@ -1,5 +1,20 @@
 import speech_recognition as sr
 import pyaudio
+import time
+
+
+
+class AudioFilter():
+    def __init__(self):
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__": #importされた場合に実行しないようにするらしい
     r = sr.Recognizer()
