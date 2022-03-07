@@ -69,6 +69,9 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
 - Pyaudioを使えばマイクからの音の入力を並列処理できるということらしい。常にマイクから音を取り続けていることが必要なので、スレッドを作ってそちらで常に処理を行っておく必要があるがPyaudioのノンブロッキングモードを使えば勝手にPyaudioでThreadを作ってくれて実行してくれるようだ。
 - んで、音が入力されたときに呼び出されるCallBack関数を定義しておけば、ほかの処理と並列処理できるというわけだ。
 
-### 参考資料 - pyAudioを使ってできるっぽい
-- https://ensekitt.hatenablog.com/entry/2018/09/07/200000
+### 参考資料 
+- マイクの入力をそのまま出力する
+    - https://ensekitt.hatenablog.com/entry/2018/09/07/200000
+    - https://takeshid.hatenadiary.jp/entry/2016/01/10/153503
+    
 
