@@ -28,11 +28,23 @@
 ```
 pip install SpeechRecognition
 ```
+### WindowsのPyaudioインストール
 - Python3.7~3.9だとPyaudioがpip経由でインストールできない。非公式版だが、下記URLからPython 3.9用 Pyaudio(PyAudio‑0.2.11‑cp39‑cp39‑win_amd64.whl)をダウンロードする
+    - https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 - whlファイルがあるディレクトリでpip経由でインストールする
 ```
 py -m pip install PyAudio-0.2.11-cp39-cp39-win_amd64.whl
 ```
+### linuxのPyaudioインストール
+- portaudioというライブラリに依存しておりそのままだとpip経由でpyAudioインストールしようとするとエラーを吐くため
+```
+sudo apt-get install portaudio19-dev
+```
+でportaudioをインストールしてから
+```
+pip install pyaudio
+```
+でOK
 ### 実装したコード
 ```
 import speech_recognition as sr
