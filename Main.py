@@ -3,9 +3,6 @@ import speech_recognition as sr
 import pyaudio
 import time
 
-
-
-
 class AudioFilter():
     def __init__(self):# classの初期設定
         self.p = pyaudio.PyAudio()
@@ -42,6 +39,7 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
 
     # ノンブロッキングなのでこの中で音声認識・音の変換などを行う
     while af.stream.is_active():
+        #print("なんの処理をしてもOK")
         r = sr.Recognizer()
         with sr.Microphone() as source: # pyaudioを使ってマイクを認識？
             r.adjust_for_ambient_noise(source)
@@ -52,7 +50,6 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
                 print(query)
             except:
                 print("エラー")
-
     # ストリーミングを止める
     af.stream.stop_stream()
     af.stream.close()

@@ -12,7 +12,7 @@
         - インストールver. python-3.9.1-amd64.exe
         - Add Python 3.x to PATH を忘れないこと
     - pip → 3.9.1にすでに入っているのでインストール不要
-- Pythonでマイクからの音声を取り込む - SSB
+- Pythonでマイクからの音声を取り込む - SSB(完了)
 - Speech Recognitionを使って文字起こししてみる - SSB(完了)
     - https://self-development.info/python%E3%81%A7%E9%9F%B3%E5%A3%B0%E3%81%8B%E3%82%89%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%81%B8%E5%A4%89%E6%8F%9B%E3%80%90speechrecognition%E3%80%91/
 - 文字起こしの結果から、音声のフィードバックの仕方を変化させてみる
@@ -76,14 +76,76 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     - https://heartstat.net/2021/05/27/python_speech_recognition/
     - http://xn--u9j207iixgbigp2p.xn--tckwe/archives/10584
 
-## Pythonでマイクからの音声を取り込んでスピーカーに流す
-### Pyaudioを使ってマイクから入力した音声をそのまま流す
+## Pyaudioを使ってマイクから入力した音声をそのままスピーカーに流す
 - Pyaudioを使えばマイクからの音の入力を並列処理できるということらしい。常にマイクから音を取り続けていることが必要なので、スレッドを作ってそちらで常に処理を行っておく必要があるがPyaudioのノンブロッキングモードを使えば勝手にPyaudioでThreadを作ってくれて実行してくれるようだ。
-- んで、音が入力されたときに呼び出されるCallBack関数を定義しておけば、ほかの処理と並列処理できるというわけだ。
+- なのでStreamがOpenしている（音をマイクから収集してスピーカーに流している間）間に音声認識なり、音調変換なりを行えば良さそう
 
+### 実装コード
+```
+# coding: UTF-8
+import speech_recognition as sr
+import pyaudio
+import time
+
+class AudioFilter():
+    def __init__(self):# classの初期設定
+        self.p = pyaudio.PyAudio()
+        self.channels = 2 #マイクがモノラルの場合は1
+        self.rate = 48000 #DVDレベルなので重かったら16000
+        self.format = pyaudio.paInt16
+        self.stream = self.p.open(
+            format = self.format,
+            channels = self.channels,
+            rate = self.rate,
+            output = True,
+            input = True,
+            stream_callback=self.callback)#音声が流れてきた時に叩くCallBack関数を指定する
+
+
+#  format  : ストリームを読み書きするときのデータ型
+#  channels: ステレオかモノラルかの選択 1でモノラル 2でステレオ
+#  rate    : サンプル周波数
+#  output  : 出力モード
+    
+    # コールバック関数（再生が必要なときに呼び出される）
+    def callback(self, in_data, frame_count, time_info, status):
+        out_data = in_data
+        return (out_data, pyaudio.paContinue)
+    # 音声取り込みをやめるとき
+    def close(self):
+        self.p.terminate() 
+
+if __name__ == "__main__": #importされた場合に実行しないようにするらしい
+    #AudioFileterのインスタンスを作る
+    af = AudioFilter()
+    #ストリーミングを始める
+    af.stream.start_stream()
+
+    # ノンブロッキングなのでこの中で音声認識・音の変換などを行う
+    while af.stream.is_active():
+        print("なんの処理をしてもOK")
+        #r = sr.Recognizer()
+        #with sr.Microphone() as source: # pyaudioを使ってマイクを認識？
+        #    r.adjust_for_ambient_noise(source)
+        #    print("音声を読み取っています")
+        #    audio = r.listen(source)
+        #    try:
+        #        query = r.recognize_google(audio, language='ja-JP')
+        #        print(query)
+        #    except:
+        #        print("エラー")
+    # ストリーミングを止める
+    af.stream.stop_stream()
+    af.stream.close()
+    af.close()
+```
+### 結果
+- 若干実際の音声に対して遅れて出力されるが、音質的には問題なさそう
 ### 参考資料 
-- マイクの入力をそのまま出力する
+- PyAudioを用いてマイクの入力をそのまま出力する
     - https://ensekitt.hatenablog.com/entry/2018/09/07/200000
     - https://takeshid.hatenadiary.jp/entry/2016/01/10/153503
-    
+## PyAudioを使ってマイクから拾った音に対して加工をかけてからスピーカーに流す
+
+
 
