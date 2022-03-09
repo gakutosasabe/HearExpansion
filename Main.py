@@ -40,26 +40,24 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     #ストリーミングを始める
     af.stream.start_stream()
 
-    # ノンブロッキングなので好きなことをしていい場所
+    # ノンブロッキングなのでこの中で音声認識・音の変換などを行う
     while af.stream.is_active():
-        time.sleep(0.1)
+        r = sr.Recognizer()
+        with sr.Microphone() as source: # pyaudioを使ってマイクを認識？
+            r.adjust_for_ambient_noise(source)
+            print("音声を読み取っています")
+            audio = r.listen(source)
+            try:
+                query = r.recognize_google(audio, language='ja-JP')
+                print(query)
+            except:
+                print("エラー")
 
     # ストリーミングを止める
     af.stream.stop_stream()
     af.stream.close()
     af.close()
 
-
-    r = sr.Recognizer()
-    with sr.Microphone() as source: # pyaudioを使ってマイクを認識？
-        r.adjust_for_ambient_noise(source)
-        print("音声を読み取っています")
-        audio = r.listen(source)
-        try:
-            query = r.recognize_google(audio, language='ja-JP')
-            print(query)
-        except:
-            print("エラー")
 
 
 
