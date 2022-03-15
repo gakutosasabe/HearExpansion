@@ -3,6 +3,8 @@ import speech_recognition as sr
 import pyaudio
 import time
 
+censor_words = ["スパイダーマン","ドラえもん","みやさん"] #検閲ワード（仮）
+
 class AudioFilter():
     def __init__(self):# classの初期設定
         self.p = pyaudio.PyAudio()
@@ -30,6 +32,17 @@ class AudioFilter():
     # 音声取り込みをやめるとき
     def close(self):
         self.p.terminate() 
+
+class AudioCensorship():
+    def character_search(source_words, censor_words): # 文字起こしした文字から検閲ワードを見つける
+        for item in censor_words:
+            cw_locate = source_words.find(item)
+            if cw_locate != -1:
+                return True
+            else:
+                return False
+        return
+
 
 if __name__ == "__main__": #importされた場合に実行しないようにするらしい
     #AudioFileterのインスタンスを作る
