@@ -32,12 +32,17 @@ class AudioFilter():
     # 音声取り込みをやめるとき
     def close(self):
         self.p.terminate() 
+    
+    def mute_audio(self): #スピーカーへの音量を小さくする
+        return
+
 
 class AudioCensorship():
     def character_search(source_words, censor_words): # 文字起こしした文字から検閲ワードを見つける
         for item in censor_words:
             cw_locate = source_words.find(item)
             if cw_locate != -1:
+                print("検閲ワード:" + item + " を発見しました")
                 return True
             else:
                 return False
