@@ -156,7 +156,25 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
 - PyAudioを用いてマイクの入力をそのまま出力する
     - https://ensekitt.hatenablog.com/entry/2018/09/07/200000
     - https://takeshid.hatenadiary.jp/entry/2016/01/10/153503
-## PyAudioを使ってマイクから拾った音に対して加工をかけてからスピーカーに流す
+## PyAudioとPyworldを使ってマイクから拾った音に対して加工をかけてからスピーカーに流す
+- PyaudioとPyworldを使うことによって、リアルタイム音声合成が可能
+- PyaudioでChunk毎に切り取った音声データをPyworldで加工した後、出力してあげるイメージ
+- 参考資料
+    - https://gist.github.com/tam17aki/8e702542f5e16c0815e7ddcc6e14bbb8
+    - https://tam5917.hatenablog.com/entry/2022/01/10/155454
+    - https://tam5917.hatenablog.com/entry/2019/04/28/123934
+    - https://gist.github.com/lefirea/ca5141176507c8d543542f09dc401164
+
+## Pycawを使ってWindowsのマスターボリュームをPythonから操作する
+- Pycawというライブラリを使うと、WindowsのアプリケーションのマスターボリュームをPythonから変えられるらしいので試してみる
+### Pycawのインストール
+- pip経由でPycawを落としてくる
 
 
-
+- 参考資料
+    - https://stackoverflow.com/questions/20828752/python-change-master-application-volume
+    - https://openbase.com/python/pycaw/documentation
+## Pyalsaudioを使ってラズパイのボリュームをPythonから操作する
+- 参考資料
+    - https://stackoverflow.com/questions/20828752/python-change-master-application-volume
+    - https://openbase.com/python/pycaw/documentation
