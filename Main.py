@@ -3,7 +3,7 @@ import speech_recognition as sr
 import pyaudio
 import time
 
-censor_words = ["スパイダーマン","ドラえもん","みやさん"] #検閲ワード（仮）
+censor_words = ["こんにちは","ドラえもん","みやさん"] #検閲ワード（仮）
 
 class AudioFilter():
     def __init__(self):# classの初期設定
@@ -37,21 +37,26 @@ class AudioFilter():
         return
 
 
-class AudioCensorship():
-    def character_search(source_words, censor_words): # 文字起こしした文字から検閲ワードを見つける
+class AudioCensorship(): #音声検閲クラス
+    def character_search(self, source_words, censor_words): # 文字起こしした文字から検閲ワードを見つける
         for item in censor_words:
             cw_locate = source_words.find(item)
             if cw_locate != -1:
                 print("検閲ワード:" + item + " を発見しました")
-                return True
+                word_detect = True
             else:
-                return False
-        return
+                word_detect = False
+         
+        
+        return word_detect
 
 
 if __name__ == "__main__": #importされた場合に実行しないようにするらしい
     #AudioFileterのインスタンスを作る
     af = AudioFilter()
+    #AudioCensorshipのインスタンスを作る
+    ac = AudioCensorship()
+
     #ストリーミングを始める
     af.stream.start_stream()
 
@@ -66,6 +71,7 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
             try:
                 query = r.recognize_google(audio, language='ja-JP')
                 print(query)
+                words_detect = ac.character_search(query, censor_words)
             except:
                 print("エラー")
     # ストリーミングを止める
