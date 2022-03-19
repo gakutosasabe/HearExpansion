@@ -169,17 +169,44 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     - https://gist.github.com/lefirea/ca5141176507c8d543542f09dc401164
 
 ## Pycawを使ってWindowsのマスターボリュームをPythonから操作する
-- Pycawというライブラリを使うと、WindowsのアプリケーションのマスターボリュームをPythonから変えられるらしいので試してみる
+- Pycawというライブラリを使うと、Windowsのアプリケーション毎にPythonからボリュームを変えられる
+- プロセス名を指定すればアプリケーション毎にボリュームの設定が可能
+- win32APIのISimpleAudioVolumeインターフェースをPythonで使えるようなイメージ
+    - https://docs.microsoft.com/en-us/windows/win32/api/audioclient/nn-audioclient-isimpleaudiovolume
 ### Pycawのインストール
 - pip経由でPycawを落としてくる
 ```
 pip install pycaw
 ```
+### 使い方
+- 例：全てのアプリ(全てのSession)をMuteする
+```
+"""
+Per session GetMute() SetMute() using ISimpleAudioVolume.
+"""
+from __future__ import print_function
+
+from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
 
 
-- 参考資料
-    - https://stackoverflow.com/questions/20828752/python-change-master-application-volume
-    - https://openbase.com/python/pycaw/documentation
+def main():
+    sessions = AudioUtilities.GetAllSessions()
+    for session in sessions:
+        volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+        print("volume.GetMute(): %s" % volume.GetMute())
+        volume.SetMute(1, None)
+
+
+if __name__ == "__main__":
+    main()
+```
+### 結果
+- 全てのアプリをMuteすることができた。
+![picture 1](images/cd78637348f97fb487733df1440e01b7ca260e44a252de9d09ebd17c6f011c72.png)  
+
+### 参考資料
+- https://stackoverflow.com/questions/20828752/python-change-master-application-volume
+- https://openbase.com/python/pycaw/documentation
 ## Pyalsaudioを使ってラズパイのボリュームをPythonから操作する
 - 参考資料
     - https://stackoverflow.com/questions/20828752/python-change-master-application-volume

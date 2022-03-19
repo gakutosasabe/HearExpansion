@@ -2,8 +2,11 @@
 import speech_recognition as sr
 import pyaudio
 import time
+from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
+
 
 censor_words = ["こんにちは","ドラえもん","みやさん"] #検閲ワード（仮）
+
 
 class AudioFilter():
     def __init__(self):# classの初期設定
@@ -50,12 +53,47 @@ class AudioCensorship(): #音声検閲クラス
         
         return word_detect
 
+class AudioController(object): #スピーカーのボリューム調整クラス
+    def __init__(self, process_name):
+        self.process_name = process_name
+
+    def mute(self): #アプリをミュートにする
+        sessions = AudioUtilities.GetAllSessions()
+        for session in sessions:
+            interface = session.SimpleAudioVolume
+            if session.Process and session.Process.name() == self.process_name:
+                interface.SetMute(1, None)
+                print(self.process_name, 'has been muted.')
+    
+    def unmute(self):
+        sessions = AudioUtilities.GetAllSessions()
+        for session in sessions:
+            interface = session.SimpleAudioVolume
+            if session.Process and session.Process.name() == self.process_name:
+                interface.SetMute(0, None)
+                print(self.process_name, 'has been unmuted.')
+
+    def set_volume(self, decibels): #アプリのボリュームを変える
+        sessions = AudioUtilities.GetAllSessions()
+        for session in sessions:
+            interface = session.SimpleAudioVolume
+            if session.Process and session.Process.name() == self.process_name:
+                # only set volume in the range 0.0 to 1.0
+                self.volume = min(1.0, max(0.0, decibels))
+                interface.SetMasterVolume(self.volume, None)
+                print('Volume set to', self.volume)  # debug
+             
 
 if __name__ == "__main__": #importされた場合に実行しないようにするらしい
     #AudioFileterのインスタンスを作る
     af = AudioFilter()
     #AudioCensorshipのインスタンスを作る
-    ac = AudioCensorship()
+    ace = AudioCensorship()
+    #AudioControllerのインスタンスを作る
+    aco = AudioController("python.exe")
+    
+
+
 
     #ストリーミングを始める
     af.stream.start_stream()
@@ -71,7 +109,7 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
             try:
                 query = r.recognize_google(audio, language='ja-JP')
                 print(query)
-                words_detect = ac.character_search(query, censor_words)
+                words_detect = ace.character_search(query, censor_words)
             except:
                 print("エラー")
     # ストリーミングを止める
