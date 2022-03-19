@@ -65,7 +65,7 @@ class AudioController(object): #スピーカーのボリューム調整クラス
                 interface.SetMute(1, None)
                 print(self.process_name, 'has been muted.')
     
-    def unmute(self):
+    def unmute(self): #アプリをアンミュートする
         sessions = AudioUtilities.GetAllSessions()
         for session in sessions:
             interface = session.SimpleAudioVolume
@@ -110,6 +110,11 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
                 query = r.recognize_google(audio, language='ja-JP')
                 print(query)
                 words_detect = ace.character_search(query, censor_words)
+                if words_detect == True:
+                    time_sta = time.time()
+                    aco.mute()
+                if time.time - time_sta > 60 :
+                    aco.unmute()
             except:
                 print("エラー")
     # ストリーミングを止める
