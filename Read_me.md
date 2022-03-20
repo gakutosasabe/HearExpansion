@@ -168,6 +168,20 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     - https://tam5917.hatenablog.com/entry/2019/04/28/123934
     - https://gist.github.com/lefirea/ca5141176507c8d543542f09dc401164
 
+ - voice_converter.py　を使用する
+ - 関連パッケージのインストール
+    - pip install numpy
+    - pip install scipy
+    - pip install librosa
+    - pip install wheel
+    - pip install pyworld
+
+ - pip install pyworldが通らない場合
+    - "Build Tools for Visual Studio 2019"をインストールすることで解決。
+    ※「C++ Build Tool」と「MSCV v140」にチェックしてインストールすること。
+    - https://mebee.info/2020/07/18/post-13597/
+    - https://qiita.com/yuki_2020/items/ecb3448c375ba0bec510
+
 ## Pycawを使ってWindowsのマスターボリュームをPythonから操作する
 - Pycawというライブラリを使うと、Windowsのアプリケーション毎にPythonからボリュームを変えられる
 - プロセス名を指定すればアプリケーション毎にボリュームの設定が可能
