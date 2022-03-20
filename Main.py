@@ -13,7 +13,7 @@ censor_words = ["スパイダーマン","ドラえもん","みやさん"] #検�
 def convert(signal):
     f0_rate = 2.4
     sp_rate = 0.78
-    sample_rate = 48000
+    sample_rate = 16000
 
     f0, t = pyworld.dio(signal, sample_rate)
     f0 = pyworld.stonemask(signal, f0, t, sample_rate)
