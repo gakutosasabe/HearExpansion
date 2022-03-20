@@ -5,7 +5,7 @@ import time
 from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
 
 
-censor_words = ["こんにちは","ドラえもん","みやさん"] #検閲ワード（仮）
+censor_words = ["こんにちは","ドラえもん","みやさん","バカ","アホ","まぬけ"] #検閲ワード（仮）
 
 
 class AudioFilter():
@@ -42,20 +42,20 @@ class AudioFilter():
 
 class AudioCensorship(): #音声検閲クラス
     def character_search(self, source_words, censor_words): # 文字起こしした文字から検閲ワードを見つける
+        word_detect = False # 検閲ワード検出フラグ
         for item in censor_words:
             cw_locate = source_words.find(item)
             if cw_locate != -1:
                 print("検閲ワード:" + item + " を発見しました")
                 word_detect = True
-            else:
-                word_detect = False
-         
-        
         return word_detect
 
 class AudioController(object): #スピーカーのボリューム調整クラス
-    def __init__(self, process_name):
-        self.process_name = process_name
+    def __init__(self):
+        self.process_name = "python.exe"
+        self.defaultvolume = 0.1 #初期ボリューム
+        self.enhancedvolume = 0.7 #耳拡張時のボリューム
+        self.set_defaultvolume = self.set_volume(self.defaultvolume) #インスタンス生成時にデフォルトのボリュームをセット
 
     def mute(self): #アプリをミュートにする
         sessions = AudioUtilities.GetAllSessions()
@@ -82,7 +82,36 @@ class AudioController(object): #スピーカーのボリューム調整クラス
                 self.volume = min(1.0, max(0.0, decibels))
                 interface.SetMasterVolume(self.volume, None)
                 print('Volume set to', self.volume)  # debug
-             
+    
+    def set_enhanced_volume(self): #self.enhancedvolumeにボリュームを変える
+        sessions = AudioUtilities.GetAllSessions()
+        for session in sessions:
+            interface = session.SimpleAudioVolume
+            if session.Process and session.Process.name() == self.process_name:
+                # only set volume in the range 0.0 to 1.0
+                self.volume = min(1.0, max(0.0, self.enhancedvolume))
+                interface.SetMasterVolume(self.volume, None)
+                print('Volume set to', self.volume)  # debug
+    
+    def process_volume(self): #現在のボリュームを取得する
+        sessions = AudioUtilities.GetAllSessions()
+        for session in sessions:
+            interface = session.SimpleAudioVolume
+            if session.Process and session.Process.name() == self.process_name:
+                print('Volume:', interface.GetMasterVolume())  # debug
+                return interface.GetMasterVolume()
+
+
+class Timer(): #タイマークラス
+    def __init__(self):
+        self.timer = time.time()
+    
+    def is_time_out(self, settime): 
+        if time.time() - self.timer > settime:
+            return True
+        else:
+            return False
+                
 
 if __name__ == "__main__": #importされた場合に実行しないようにするらしい
     #AudioFileterのインスタンスを作る
@@ -90,10 +119,8 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     #AudioCensorshipのインスタンスを作る
     ace = AudioCensorship()
     #AudioControllerのインスタンスを作る
-    aco = AudioController("python.exe")
+    aco = AudioController()
     
-
-
 
     #ストリーミングを始める
     af.stream.start_stream()
@@ -111,12 +138,16 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
                 print(query)
                 words_detect = ace.character_search(query, censor_words)
                 if words_detect == True:
-                    time_sta = time.time()
-                    aco.mute()
-                if time.time - time_sta > 60 :
-                    aco.unmute()
+                    aco.set_enhanced_volume()
+                    mute_timer = Timer()
             except:
                 print("エラー")
+            
+            volume_now = aco.process_volume()
+            if round(volume_now, 2) == aco.enhancedvolume: # 現在のボリュームが耳拡張ボリュームだった場合にデフォルトボリュームに戻す
+                if mute_timer.is_time_out(5) :
+                    aco.set_volume(aco.defaultvolume)
+
     # ストリーミングを止める
     af.stream.stop_stream()
     af.stream.close()
