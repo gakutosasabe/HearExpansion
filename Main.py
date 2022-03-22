@@ -274,7 +274,12 @@ class Timer(): #タイマークラス
             return True
         else:
             return False
-                
+
+class KeyInput(): #キー入力クラス
+    def __init__(self):
+    
+    def key_input(self):
+        return
 
 if __name__ == "__main__": #importされた場合に実行しないようにするらしい
 
@@ -283,6 +288,7 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     #AudioControllerのインスタンスを作る
     aco = AudioController()
 
+    
     block_length = 8
     margin_length = 1
 
