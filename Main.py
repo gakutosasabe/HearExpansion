@@ -276,10 +276,19 @@ class Timer(): #タイマークラス
             return False
 
 class KeyInput(): #キー入力クラス
-    def __init__(self):
     
-    def key_input(self):
+    def __init__(self):
+        self.start = key_input(self)
+    
+    def key_input(self): #
+        input = input("検閲ワードを入力してください : ")
+        
+        print("更に閲覧ワードの入力を続けますか？(Y/N)")
+
         return
+
+
+
 
 if __name__ == "__main__": #importされた場合に実行しないようにするらしい
 
