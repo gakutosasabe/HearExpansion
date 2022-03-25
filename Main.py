@@ -10,7 +10,7 @@ import librosa
 import pyworld
 
 censor_words = ["こんにちは","ドラえもん","みやさん","バカ","アホ","まぬけ"] #検閲ワード（仮)
-
+formant_conversion = False #フォルマント変換による音声加工
 def convert(signal):
     f0_rate = 2.4
     sp_rate = 0.78
@@ -156,43 +156,45 @@ class AudioFilter():
     
     # コールバック関数（再生が必要なときに呼び出される）
     def callback(self, in_data, frame_count, time_info, status):
+        if formant_conversion == True:
+            decoded_data = np.frombuffer(in_data, np.int16).copy()
+            chunk_size = len(decoded_data)
 
-        decoded_data = np.frombuffer(in_data, np.int16).copy()
-        chunk_size = len(decoded_data)
+            decoded_data = decoded_data.reshape(-1, 1024)
+            for c in decoded_data:
+                self.chunk.append({'data': c, 'index': self.index})
+                self.index += 1
+            
+            #if decoded_data.max() > 1000:
+            if decoded_data.max() > 0:
+                self.age = self.block_length
+            else:
+                self.age = max(0, self.age - 1)
 
-        decoded_data = decoded_data.reshape(-1, 1024)
-        for c in decoded_data:
-            self.chunk.append({'data': c, 'index': self.index})
-            self.index += 1
-        
-        #if decoded_data.max() > 1000:
-        if decoded_data.max() > 0:
-            self.age = self.block_length
-        else:
-            self.age = max(0, self.age - 1)
+            if self.age == 0:
+                self.chunk = self.chunk[-self.margin_length:]
+            else:
+                while len(self.chunk) >= self.block_length:
+                    # push self.chunk[0:16]
+                    self.worker.push_chunk(self.chunk[0:self.block_length])
 
-        if self.age == 0:
-            self.chunk = self.chunk[-self.margin_length:]
-        else:
-            while len(self.chunk) >= self.block_length:
-                # push self.chunk[0:16]
-                self.worker.push_chunk(self.chunk[0:self.block_length])
-
-                # remove self.chunk[0:8]
-                self.chunk = self.chunk[1:]
-        
-        ## Pop chunk to current list
-        ret = self.worker.pop_chunk(chunk_size)
-        
-        # Get head from current list
-        
-        if ret is not None:
-            data = ret.astype(np.int16)
-            #print(len(data), data.dtype, data.max())
-        else:
-            data = np.zeros(chunk_size, dtype=np.int16)
-        
-        out_data = data.tobytes()
+                    # remove self.chunk[0:8]
+                    self.chunk = self.chunk[1:]
+            
+            ## Pop chunk to current list
+            ret = self.worker.pop_chunk(chunk_size)
+            
+            # Get head from current list
+            
+            if ret is not None:
+                data = ret.astype(np.int16)
+                #print(len(data), data.dtype, data.max())
+            else:
+                data = np.zeros(chunk_size, dtype=np.int16)
+            
+            out_data = data.tobytes()
+        else :
+            out_data = in_data
         
         return (out_data, pyaudio.paContinue)
     
