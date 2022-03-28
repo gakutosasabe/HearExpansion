@@ -280,9 +280,9 @@ class KeyInput(): #キー入力クラス
     def __init__(self):
         self.start = key_input(self)
     
-    def key_input(self): #
+    def key_input(self,censor_words): #
         input = input("検閲ワードを入力してください : ")
-        
+        censor_words.append(input)
         print("更に閲覧ワードの入力を続けますか？(Y/N)")
 
         return
