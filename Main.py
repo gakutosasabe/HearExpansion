@@ -283,10 +283,27 @@ class KeyInput(): #キー入力クラス
         self.start = key_input(self)
     
     def key_input(self,censor_words): #
-        input = input("検閲ワードを入力してください : ")
-        censor_words.append(input)
-        print("更に閲覧ワードの入力を続けますか？(Y/N)")
-
+        while True:
+            input = input("検閲ワードを入力してください : ")
+            censor_words.append(input)
+            
+            right_input = False
+            cont_input = False
+            while right_input == False : 
+                input_y = ("更に閲覧ワードの入力を続けますか？(y/n) : ").lower() # inputを小文字に変換
+                if input_y == "y" :
+                    right_input = True
+                    cont_input = True
+                elif input_y == "n" :
+                    right_input = False
+                    cont_input = False
+                else :
+                    print("y か n を入力してください")
+                    right_input = False
+            if cont_input == True :
+                pass
+            else :
+                break
         return
 
 

@@ -173,6 +173,10 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
 ### タスク
 - アプリの立ち上げと同時にKeyInputクラスのインスタンスを作る
 - KeyInputクラスの中のコンストラクタでkey_input関数を実行する
+### 参考
+- キー入力の例外処理
+    - https://d-python.com/2020/03/22/try-except/
+
 ## PyAudioとPyworldを使ってマイクから拾った音に対して加工をかけてからスピーカーに流す
 - PyaudioとPyworldを使うことによって、リアルタイム音声合成が可能
 - PyaudioでChunk毎に切り取った音声データをPyworldで加工した後、出力してあげるイメージ
