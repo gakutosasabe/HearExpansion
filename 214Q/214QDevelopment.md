@@ -176,7 +176,9 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
 ### 参考
 - キー入力の例外処理
     - https://d-python.com/2020/03/22/try-except/
-
+- yes noで処理
+    - https://cortyuming.hateblo.jp/entry/2015/12/26/085736
+    - https://qiita.com/u1and0/items/66a72fef8bc0a7ce5eda
 ## PyAudioとPyworldを使ってマイクから拾った音に対して加工をかけてからスピーカーに流す
 - PyaudioとPyworldを使うことによって、リアルタイム音声合成が可能
 - PyaudioでChunk毎に切り取った音声データをPyworldで加工した後、出力してあげるイメージ
