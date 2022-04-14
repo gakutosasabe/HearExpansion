@@ -14,9 +14,17 @@
 ### 声紋認識技術の調査
 - OSSの音声認識エンジンJuliusを使った母音のクラスタリング
     - https://qiita.com/k-maru/items/4f12fd0f8344b9e093bd
-
 - 人の声のフォルマントを特徴量として取ってきて、その特徴量によって誰が喋ったかを分類する？
     - だが、個人が特定できるレベルの普遍的なフォルマントの特徴量とかあるのか？
     - 上の例でもあるように、分類するのにDeeplearningを必要としそう
 - 話者認識についての首都大の授業スライド
     - https://www.sp.ipc.i.u-tokyo.ac.jp/~saruwatari/SP-Grad2016_06.pdf
+    - 話者認識とはSpeaker Verigficationという分野らしい
+    - 話者を特定する普遍的なパラメータとしてMFCCというものがあるらしい
+- SVMとLPC分析でPythonによるSpeaker Verification
+    - https://heartstat.net/2021/05/12/python_sr_lpc_svm/
+- PaizaにPython×機械学習の講座があり、この中で声優の話者認識をしている
+    - https://paiza.jp/works/ai_ml/primer
+### やってみること
+- まずはPaizaの講座を受けてみようかな
+
