@@ -27,4 +27,7 @@
     - https://paiza.jp/works/ai_ml/primer
 ### やってみること
 - まずはPaizaの講座を受けてみようかな
-
+    - とりあえず登録完了
+### 画像からの人物特定技術の調査
+- OpenCVで顔を特定して追従まではできそうだけど、元々の顔写真を登録しておく必要がありそうだなぁ。これは声紋も一緒か？
+    - https://qiita.com/Hironsan/items/8ad9b11bcc0c618ec5e2
