@@ -28,6 +28,17 @@
 ### やってみること
 - まずはPaizaの講座を受けてみようかな
     - とりあえず登録完了
+### Paiza講習メモ
+- とりあえずPythonで機械学習するためにJupyterNotebookというのを入れたほうが良いらしい
+    - 使いやすいPythonの実行ツールとのこと
+#### jupiter-notebookのインストール
+```
+pip install jupyter-notebook
+```
+- そもそもpipのversionが古いらしい
+- pip入れなおすかーと思ってget-pip.pyを十個水曜と思ったらPython３のVersionが古いらしい
+- ということでPython3のヴァージョンアップをしてからpipを入れなおすぞ
+
 ### 画像からの人物特定技術の調査
 - OpenCVで顔を特定して追従まではできそうだけど、元々の顔写真を登録しておく必要がありそうだなぁ。これは声紋も一緒か？
     - https://qiita.com/Hironsan/items/8ad9b11bcc0c618ec5e2
