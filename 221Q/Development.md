@@ -26,18 +26,45 @@
 - PaizaにPython×機械学習の講座があり、この中で声優の話者認識をしている
     - https://paiza.jp/works/ai_ml/primer
 ### やってみること
-- まずはPaizaの講座を受けてみようかな
-    - とりあえず登録完了
+- まずはPaizaの講座を受けてみる
 ### Paiza講習メモ
 - とりあえずPythonで機械学習するためにJupyterNotebookというのを入れたほうが良いらしい
-    - 使いやすいPythonの実行ツールとのこと
-#### jupiter-notebookのインストール
+#### jupyter note-bookとは
+- Pythonの実行環境、VS-codeと同じようなIDEのひとつ
+- 対話型でブロックごとに実行できるのが良いらしい
+
+- と思ってJupyter-notebookを入れようと試みたが
+    - そもそもpipのversionが古いらしい
+    - pip入れなおすかーと思ってget-pip.pyを実行しようと思ったらPython３のVersionが古いらしい
+    - ということでPython3のヴァージョンアップをしてからpip3の最新バージョンを入れなおし、Jupyter-notebookをインストールする
+#### python3.5から3.9.2へのアップグレード
+- https://self-development.info/ubuntu%e3%81%ab%e6%9c%80%e6%96%b0%e3%83%90%e3%83%bc%e3%82%b8%e3%83%a7%e3%83%b3%e3%81%aepython%e3%82%92%e3%82%a4%e3%83%b3%e3%82%b9%e3%83%88%e3%83%bc%e3%83%ab%e3%81%99%e3%82%8b/
+
+#### pip3自体のインストール
+- https://qiita.com/HiroRittsu/items/e58063fb74d799d37cc4
+
+#### Jupyter-notebookのインストール
 ```
-pip install jupyter-notebook
+sudo pip3 install notebook
 ```
-- そもそもpipのversionが古いらしい
-- pip入れなおすかーと思ってget-pip.pyを十個水曜と思ったらPython３のVersionが古いらしい
-- ということでPython3のヴァージョンアップをしてからpipを入れなおすぞ
+#### Anacondaのインストール
+- しかしここまでだとnumpyやLibrosaなど機械学習のライブラリが入ってないため、個別に入れなければいけない
+- そういうのを一括にいれてくれるのがAnacondaらしい
+- ちなみにJupyter-notebookも入れてくれるってさ!!
+- すわなち最初からAnacondaいれときゃよかったんや!!!!
+- インストール方法は以下
+    - https://qiita.com/m0p1nt/items/b55b175c78ecfa42eeea
+
+#### VSCodeでの環境をAnacondaでの仮想環境に切り替える
+- さーて、Anacondaも入れたことだし、numpyやら使ってスクリプト実行してやるぜ！と思ったところ、numpyなんてねーよ！と言われてしまう
+![picture 1](../images/e19879b39fa797cb88a8543d4a3137fbb96821499cc65a1b4689b0fef1b537c6.png)  
+
+- どうやらVSCodeでのPythonの実行環境をAnacondaでの仮想環境に切り替えてあげなきゃいけないらしい
+    - こちらのURLを参考に切り替えた
+    - https://qiita.com/kusanoiskuzuno/items/dabed9c2f538bc6744cf
+
+
+
 
 ### 画像からの人物特定技術の調査
 - OpenCVで顔を特定して追従まではできそうだけど、元々の顔写真を登録しておく必要がありそうだなぁ。これは声紋も一緒か？
