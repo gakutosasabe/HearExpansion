@@ -63,6 +63,9 @@ sudo pip3 install notebook
     - こちらのURLを参考に切り替えた
     - https://qiita.com/kusanoiskuzuno/items/dabed9c2f538bc6744cf
 
+#### OpenCVが入らない！
+- jupyternotebookを仮想環境に切り替える
+    - https://www.servernote.net/article.cgi?id=anaconda-jupyter-notebook-on-myenv
 
 
 
