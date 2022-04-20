@@ -63,9 +63,14 @@ sudo pip3 install notebook
     - こちらのURLを参考に切り替えた
     - https://qiita.com/kusanoiskuzuno/items/dabed9c2f538bc6744cf
 
-#### OpenCVが入らない！
+#### jupyter-notebookでOpenCVが入らない！
+- Anacondaの仮想環境下でOpenCVを入れたはずなのにJupyter-notebookで”import cv2"するとエラーで弾かれる
+- どうやら元々入っていたROS環境と鑑賞しているらしい
+- Anacondaで仮想環境を切り替えれば自動的にJupyter-notebookの使用環境も切り替わるのかなと思っていたが、Jupyter-notebook側でも環境の切り替えが必要らしい
 - jupyternotebookを仮想環境に切り替える
     - https://www.servernote.net/article.cgi?id=anaconda-jupyter-notebook-on-myenv
+- 環境構築マジ大変
+
 
 
 
