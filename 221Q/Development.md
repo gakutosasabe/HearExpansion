@@ -71,7 +71,15 @@ sudo pip3 install notebook
     - https://www.servernote.net/article.cgi?id=anaconda-jupyter-notebook-on-myenv
 - 環境構築マジ大変
 
-
+#### anaconda経由で機械学習やデータ入出力のライブラリを入れる
+- まず仮想環境を切り替える(今回は予め作ったpy39という仮想環境)
+```
+conda activate py39
+```
+- ライブラリをインストールする（Scikitlearnの場合）
+```
+conda install scikit-learn
+```
 
 
 ### 画像からの人物特定技術の調査
