@@ -25,6 +25,8 @@
     - https://heartstat.net/2021/05/12/python_sr_lpc_svm/
 - PaizaにPython×機械学習の講座があり、この中で声優の話者認識をしている
     - https://paiza.jp/works/ai_ml/primer
+- 会議の効率的な振り返りを支援する話者クラスタリング技術
+    - https://www.global.toshiba/content/dam/toshiba/migration/corp/techReviewAssets/tech/review/2015/04/70_04pdf/f01.pdf
 ### やってみること
 - まずはPaizaの講座を受けてみる
 ### Paiza講習メモ
@@ -80,6 +82,10 @@ conda activate py39
 ```
 conda install scikit-learn
 ```
+#### Dockerで全ての環境設定をスキップする
+- Anacondaを全てのPCに入れて環境構築するのはまぁまぁめんどい（特に今回はラズパイ上でも行わなければならない）
+- Dockerを使えば
+
 #### paiza話者認識メモ
 - 機械学習で声優の声を識別する
     - 教師データ（音声）で学習し、テストデータの話者を予測する
