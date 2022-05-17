@@ -16,3 +16,31 @@
 - コンテナを管理するプロセスは通常のプロセスを管理するコストとほとんど変わらず、仮想マシンを管理するコストと比較して非常に軽い！
 # コンテナの機能
 ## 名前空間の隔離機能
+- ファイルシステム、PC名、ユーザー名、グループ名、プロセスID、ネットワーク機能をコンテナ毎に独自に設定できる機能
+## リソースの隔離機能
+- CPUやメモリ、ディスク入出力など、コンテナ内で利用するリソースを他のコンテナから隔離したり設定に基づいて振り分ける機能
+- Dockerでは最終的なアプリケーションをホストOS上の1つのプロセスとして実行される
+![picture 1](../images/8f8d8c26425931f7de3891b75a37dc7040913bd31f11f0e9438599a7d42cef3a.png)  
+- それに対してハイパーバイザー型やホスト型の仮想実行環境では仮想化されたハードウェア上でLinuxOSが動作し、その上でアプリケーションのプロセスが動作している。アプリケーションを実行するためにゲストOSを稼働しなければならないので起動に時間もかかるし、CPUやメモリ、ディスクなどもリソースを多く消費する。
+![picture 1](../images/b6a14f1d0cd6a375b04a144c0b5a2fbadbc71bb9a190339449a0f01b4ea1d92e.png)  
+
+# Dockerイメージとは
+- アプリケーションとその実行環境、展開・操作方法などをまとめてひとつのパッケージにしたもの。
+- Dockerfileを使うとイメージに対して適用する指示を記述できる。（Ruby,MySQLのパッケージを追加し、Appコマンドを実行する等）
+
+# Dockerイメージの履歴管理
+- Dockerのコンテナ中ではファイルシステムは全て書込み禁止となっていて、書き込まれた内容は全て「レイヤー」に保存される。更新された差分データのみを別ファイルとして取り扱うのでGitのようにすぐに以前のイメージに戻したり、新しく派生の環境を作ったりできる
+
+#　ここまでの参考記事
+- https://atmarkit.itmedia.co.jp/ait/articles/1701/31/news043.html
+
+# Dockerを使ってみる(Ubuntu)
+- 本家DockerのリポジトリからDLしてきてインストールする
+
+```
+$ sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+$ sudo apt-get update
+$ sudo apt-get install docker-ce
+```
