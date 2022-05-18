@@ -31,10 +31,8 @@
 # Dockerイメージの履歴管理
 - Dockerのコンテナ中ではファイルシステムは全て書込み禁止となっていて、書き込まれた内容は全て「レイヤー」に保存される。更新された差分データのみを別ファイルとして取り扱うのでGitのようにすぐに以前のイメージに戻したり、新しく派生の環境を作ったりできる
 
-#　ここまでの参考記事
-- https://atmarkit.itmedia.co.jp/ait/articles/1701/31/news043.html
-
 # Dockerを使ってみる(Ubuntu)
+## Docker本体のインストール
 - 本家DockerのリポジトリからDLしてきてインストールする
 
 ```
@@ -44,3 +42,37 @@ $ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ub
 $ sudo apt-get update
 $ sudo apt-get install docker-ce
 ```
+## ユーザアカウント作成
+- ユーザーを有効にするのに最ログインが必要なので一度シェルを再起動します
+```
+$ sudo gpasswd -a [ユーザ名] docker
+$ exit
+```
+## Dockerの動作確認
+- バージョン確認する
+```
+$ docker --version
+Docker version 20.10.7, build f0df350
+```
+- 下記コマンドで動作確認する。Hello from Docker!~のメッセージが現れたら成功
+```
+$ docker run --rm hello-world
+```
+## Docker Composeをインストールする
+- Docker composeとは複数のコンテナで構成されるアプリケーションについてDockerイメージのビルドや各コンテナの起動・停止などをより簡単に行えるようになるツール
+- 下記コマンドを実行する
+```
+$ mkdir -p ~/.docker/cli-plugins/
+$ curl -SL https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+$ chmod +x ~/.docker/cli-plugins/docker-compose
+```
+- バージョン確認
+```
+$ docker compose version
+Docker Compose version v2.5.0
+```
+
+
+#　参考記事
+- https://atmarkit.itmedia.co.jp/ait/articles/1701/31/news043.html
+- https://knowledge.sakura.ad.jp/16862/
