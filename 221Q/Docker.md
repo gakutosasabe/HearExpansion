@@ -71,8 +71,17 @@ $ chmod +x ~/.docker/cli-plugins/docker-compose
 $ docker compose version
 Docker Compose version v2.5.0
 ```
-
+## Dockerの開発手順
+- 「docker images」コマンドで利用できるイメージを確認する
+- イメージが足りていなかったら「docker search」「docker pull」コマンドでDockerレジストリから必要なイメージを入手したり、Dockerfileというスクリプトファイルと「docker build」コマンドで新しいイメージを作成する
+- dockerイメージが用意出来たら「docker run」コマンドで起動し、「docker ps」コマンドで実行中のコンテナを確認する
+- Dockerのコンテナは独立したネットワークを持つプロセスとして起動するので、外部と通信する場合は[docker port]コマンドでネットワークの設定を行う。
+- [docker commit]コマンドで新しいイメージとして保存することができる。
+- 残っているディスクイメージを完全削除したい場合は[docker rm]コマンドで削除できる
+- Docker imageそのものを削除したい場合は[docker rmi]コマンドを実行する
 
 #　参考記事
 - https://atmarkit.itmedia.co.jp/ait/articles/1701/31/news043.html
 - https://knowledge.sakura.ad.jp/16862/
+- bash シェルスクリプトとは
+    - https://shellscript.sunone.me/tutorial.html
