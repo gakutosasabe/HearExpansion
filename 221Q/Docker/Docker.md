@@ -23,9 +23,9 @@
 ## リソースの隔離機能
 - CPUやメモリ、ディスク入出力など、コンテナ内で利用するリソースを他のコンテナから隔離したり設定に基づいて振り分ける機能
 - Dockerでは最終的なアプリケーションをホストOS上の1つのプロセスとして実行される
-![picture 1](../images/8f8d8c26425931f7de3891b75a37dc7040913bd31f11f0e9438599a7d42cef3a.png)  
+![picture 1](../../images/8f8d8c26425931f7de3891b75a37dc7040913bd31f11f0e9438599a7d42cef3a.png)  
 - それに対してハイパーバイザー型やホスト型の仮想実行環境では仮想化されたハードウェア上でLinuxOSが動作し、その上でアプリケーションのプロセスが動作している。アプリケーションを実行するためにゲストOSを稼働しなければならないので起動に時間もかかるし、CPUやメモリ、ディスクなどもリソースを多く消費する。
-![picture 1](../images/b6a14f1d0cd6a375b04a144c0b5a2fbadbc71bb9a190339449a0f01b4ea1d92e.png)  
+![picture 1](../../images/b6a14f1d0cd6a375b04a144c0b5a2fbadbc71bb9a190339449a0f01b4ea1d92e.png)  
 
 # Dockerイメージとは
 - アプリケーションとその実行環境、展開・操作方法などをまとめてひとつのパッケージにしたもの。
@@ -107,14 +107,55 @@ docker images
 docker run -it --rm --name tensorflow tensorflow/tensorflow
 ```
 - そうするとTensor flowのイメージが立ち上がる
-![picture 2](../images/203f09416b064a0acb3d91ca6c2322803c619f40b253f62669d06c28ed8ea51e.png)  
+![picture 2](../../images/203f09416b064a0acb3d91ca6c2322803c619f40b253f62669d06c28ed8ea51e.png)  
 
 - lsコマンドでファイル構造を見てみよう！
-![picture 3](../images/29253dd662ab8f6ce7dd53aca2ff3524b36cd7671a858bc4895de06bb8055754.png)  
+![picture 3](../../images/29253dd662ab8f6ce7dd53aca2ff3524b36cd7671a858bc4895de06bb8055754.png)  
 
 - この環境はDockerイメージ固有の環境であるため、何をしようとコンテナを破棄して、また立ち上げれば全て元通りとなる！
 
+- exit か　Ctrl + Dでシェルを終了する
+
 ## ホストとファイル共有を行う
+- ホストPCと共有フォルダを設定することによってファイル共有を行うことができる。ホスト側で作ったプログラムをDocker側で動かす時などに使う。
+- 下記コマンドを入力する
+```
+docker run -it -v $PWD/docker_share:/share --rm --name tensorflow tensorflow/tensorflow
+
+```
+- -vというオプションを使って-v host directory:[container directory] と指定することで、ホスト側とコンテナ側のディレクトリを共有できる
+
+- 上記コマンドを入力すると実行したディレクトリ以下に下記のようにdocker_shareフォルダが作られる
+![picture 4](../../images/2463c5ae157d297489bcdd3271c11ec7bf817a189e2dc888d8339c213edc72d0.png)  
+
+- このdocker_shareフォルダの中に試しにtest.md をコピーしてみる（管理者権限が必要）
+![picture 5](../../images/9d4cddc6378099ba69e090750d1cfe6ea9c02ca57298400afd204e55d8d11e83.png)  
+
+- Dockerイメージを立ち上げているシェルでshareフォルダを覗いてみると確かにtest.mdが存在する
+![picture 6](../../images/43fc7c1245a5d3f3d7bf809b3a16046b2ec1707f4adbb4b3b9973b9f2b7737f1.png)  
+
+- この仕組みを使ってコンテナ内とホストPCでファイルのやり取りができる
+
+## ホストからコンテナ内で立ち上げたJupyternotebookにアクセスしてみる
+- Jupyter notebook環境を下記コマンドでPullして同時に立ち上げる
+```
+$ docker run -p 8888:8888 -it --rm --name ds jupyter/datascience-notebook
+```
+- http://localhost:8888にアクセス
+- 出てきた画面にシェルに表示されているTokenを入力する
+![picture 1](../../images/d4fd0ff05a0a8db876a38ddf21a8164b0f48394c27e22391e39095aa023d534e.png)  
+
+- Jupyter notebookが立ち上がる。一瞬で環境構築終わった。はええええええええええ
+![picture 2](../../images/7eed30918f541c54e582c50a2f3c85c4af71a9263bc85b6e527e3a662b59703b.png)  
+
+
+## Dockerイメージの保存
+- Dockerイメージの保存は下記3通り
+    - コンテナからイメージを作成する
+    - Dockerfileからイメージを作成する
+    - GitHubとDockerHubを連携させてイメージ作成する
+
+### コンテナからイメージを作成する
 
 ##　参考記事
 - https://atmarkit.itmedia.co.jp/ait/articles/1701/31/news043.html
