@@ -156,6 +156,31 @@ $ docker run -p 8888:8888 -it --rm --name ds jupyter/datascience-notebook
     - GitHubとDockerHubを連携させてイメージ作成する
 
 ### コンテナからイメージを作成する
+- 下記コマンドで起動しているコンテナを新たなイメージとして保存できる
+```
+docker commit ds gakuto66/ds-image
+```
+- dsの部分はコンテナ名 gakuto66はユーザーネーム ds-imageはリポジトリ名である
+
+- イメージ名はDocker Hubで公開したい場合はイメージ名を
+<Docker Hub ユーザ名>/<リポジトリ名>　とする必要が在る
+
+- 保存したイメージは下記コマンドで実行できる
+```
+docker run -it --rm --name ds gakuto66/ds-image
+```
+## dockerfileからコンテナを作成する
+- ここは深そうなので省略
+
+## 作成したDocker imageをHUBにアップロードする
+- Docker hubにログインする
+```
+docker login
+```
+- 作ったイメージをPushする
+```
+docker push gakuto66/ds-image
+```
 
 ##　参考記事
 - https://atmarkit.itmedia.co.jp/ait/articles/1701/31/news043.html
