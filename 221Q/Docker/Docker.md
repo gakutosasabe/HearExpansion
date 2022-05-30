@@ -181,6 +181,16 @@ docker login
 ```
 docker push gakuto66/ds-image
 ```
+- docker hubを見ると確かにイメージがPushされている
+![picture 1](../../images/a6bd4ca2663b842ebc7adc60ce1ac9f6447c633462238a6a1b62da9b9612c374.png)  
+
+# 耳身体能力拡張のプロトタイプをDockerイメージにしてDockerHubにブチ上げてみる
+
+- あらゆるPythonライブラリを2つのパソコンに入れなきゃいけなくてクソ時間を浪費していた今まで
+- そんな無駄な時間もおさらば！Dockerイメージにライブラリごとブチ込んでDockerHubに打ち上げてやりゃあどんPCでも環境構築は一瞬さ！ということでやってみよう
+
+## Docker fileを書く
+
 
 ##　参考記事
 - https://atmarkit.itmedia.co.jp/ait/articles/1701/31/news043.html
@@ -189,3 +199,5 @@ docker push gakuto66/ds-image
     - https://shellscript.sunone.me/tutorial.html
 - からあげさんのDocker使って機械学習入門
  - https://karaage.hatenadiary.jp/entry/2019/05/17/073000
+ - さくらナレッジさん
+    - https://knowledge.sakura.ad.jp/15253/
