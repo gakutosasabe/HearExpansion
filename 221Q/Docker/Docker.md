@@ -100,7 +100,7 @@ docker pull tensorflow/tensorflow
 ```
 docker images
 ```
-![picture 1](../images/0033a1c76df4ab9988bccbed59a4b907c6cbb8d838cfda81317203f68ba1ebd9.png)  
+![picture 1](../../images/0033a1c76df4ab9988bccbed59a4b907c6cbb8d838cfda81317203f68ba1ebd9.png)  
 
 - 下記コマンドでTensor flowのイメージを立ち上げてみる
 ```
@@ -177,19 +177,170 @@ docker run -it --rm --name ds gakuto66/ds-image
 ```
 docker login
 ```
-- 作ったイメージをPushする
+- 作ったイメージをPushするアプリ
 ```
 docker push gakuto66/ds-image
 ```
 - docker hubを見ると確かにイメージがPushされている
 ![picture 1](../../images/a6bd4ca2663b842ebc7adc60ce1ac9f6447c633462238a6a1b62da9b9612c374.png)  
 
-# 耳身体能力拡張のプロトタイプをDockerイメージにしてDockerHubにブチ上げてみる
+# 自分の開発したアプリを開発環境ごとをDockerイメージにしてDockerHubにブチ上げてみる
 
 - あらゆるPythonライブラリを2つのパソコンに入れなきゃいけなくてクソ時間を浪費していた今まで
 - そんな無駄な時間もおさらば！Dockerイメージにライブラリごとブチ込んでDockerHubに打ち上げてやりゃあどんPCでも環境構築は一瞬さ！ということでやってみよう
 
-## Docker fileを書く
+## 自分の耳拡張アプリが起動できるコンテナをDockerfileから生成する
+
+
+### Docker fileを書く
+- Docker fileは拡張子なしでDockerfileという名前にする
+- 中身は以下
+```
+# pyaudioのサポートがpython3.6までなので
+FROM python:3.6
+USER root
+
+RUN apt-get update
+RUN apt-get -y install locales && \
+    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
+ENV LC_ALL ja_JP.UTF-8
+ENV TZ JST-9
+ENV TERM xterm
+
+# Vim使えないけど練習のため
+RUN apt-get install -y vim less
+RUN pip install --upgrade pip
+RUN pip install --upgrade setuptools
+
+# 一応Jupyternotebookも入れておく
+RUN python -m pip install jupyterlab
+
+# pyaudioはPortaudioに依存しているため
+RUN apt-get install -y portaudio19-dev 
+
+# pyaudioのインストール
+RUN pip install pyaudio
+
+# Speech recognitionのインストール
+RUN pip install SpeechRecognition
+
+# pycawのインストール
+RUN pip install pycaw
+```
+### Docker fileを元にコンテナイメージを作成する
+- Docker fileがあるディレクトリで以下コマンドを実行しDockerfileを元にコンテナイメージを作成する
+    - testの部分はコンテナ名
+```
+docker build -t test:1 .
+```
+- 実行するとbuildできた！！すげええ！
+![picture 1](../../images/f6554f4e33befd7da7267a44cd3f317eca84043bbc0b33c173b82e321d8074c9.png)  
+
+- docker imagesでイメージを確認する
+![picture 2](../../images/bb8a7f04976dc1e6b43df9321b8f407d65fb7116d70aedc6fb7d63de2f36eaa4.png)  
+
+### 作ったコンテナを起動してみる
+- docker runで作ったtestコンテナを実行してみる
+```
+$ docker run --name python -it test:1 /bin/bash
+```
+- -- nameはコンテナの名前を指定できる（私はpython)
+- test:1の部分はDockerimageの名前
+- /bin/bashを指定することでルートフォルダから操作を開始できる
+
+- 無事、コンテナが起動した
+![picture 3](../../images/c1b450e9b2336b101c4157a7c9d4a17a72cf563cf185346fcaf22617e6d1ff3f.png)  
+
+
+### Tips:DockerfileでベースイメージにOSを選べる謎
+- Dockerfileの中ではベースイメージにOS（Ubuntu）なども選択できる
+- だが、Dockerは仮想化で他のOSをホストのOS上に立てて動作させるような仕組みではない
+- UbuntuとかCentOSは、ディストリビューションと呼ばれており、Linuxカーネルは同じで、その上に載っているコマンドとか設定が違うだけのものである
+- よってDocker環境でもアプリはホストOSのLinuxカーネルをそのまま利用する
+- コマンド類については、Dockerコンテナで移動させたルートディレクトリ環境に、そのOS用のものを格納する
+- これにより、アプリから見て、まるで別OSで動いているかのように見せかけている
+- なので、WindowsとかMacOSのように、本当に別種類のOSを動かすことは出来ない。
+
+## Visual Studio codeからコンテナ内にアクセスする
+- Visual Studio Codeからコンテナ内にアクセスしてそこで開発できればめっちゃええやん〜ということでアクセスする
+- VSCodeで拡張機能"Docker"と"Remote - Conteiners"をインストールする
+- docker run でコンテナを起動する
+- VScodeからリモートエクスプローラーを選択
+![picture 1](../../images/cdfc16f8cf985ee762ef1dc6e7cefb9fbc91fb8378b5e7d7cc9c02de87578867.png)  
+- 開発したいコンテナを選択して、"Attach Container"アイコンを選択する
+![picture 2](../../images/7c591d7a44744a40302d9b20fae14bd8a6a8ad7344e86ca4f129ca8905a966a0.png)  
+- コンテナに接続される
+![picture 3](../../images/ed7a3521546dff05bca7ec450227805588498139f46ce639b7c30be8f6e6a58c.png)  
+- 左下に接続しているコンテナ名が表示される
+![picture 4](../../images/ba03b6d7cf6b4412ac13f2430e8d6c9bccabc589dba8e46728653f6560505b2d.png)  
+
+- "ファイル"→"フォルダを開く"を選択すると、コンテナ内のフォルダにアクセスできる
+![picture 5](../../images/62b2a2de174e98c8c98833bd2b0963d171c5f489ee2ba4ee29d15c040cc806d6.png)  
+
+- あとは好きなフォルダでスクリプトを書くなりして開発を進められる。
+
+## 開発したコンテナを新たなイメージとして保存する
+- コンテナからCtrl + Dで抜けだして下記コマンドで開発したこtんテナを新たなイメージとして保存する
+```
+docker commit [オプション] [コンテナ] [リポジトリ[:タグ]]
+```
+- 例えば以下のようなコンテナがあったとき
+![picture 6](../../images/81d62298b1c28c8f1f2e1a2269fb98b85779fee9cda68780e84da35addd844e3.png)  
+- 下記のようにコンテナをイメージとして保存している
+![picture 7](../../images/2a15020e9acbffb4357499152d74e1a932f5425236ae0542128f1a8f80491f50.png)  
+
+## 作成したDocker imageをHUBにアップロードする
+- Docker hubにログインする
+```
+docker login
+```
+- 作ったイメージをPushする
+```
+docker push <ユーザー名>/<イメージ名>
+```
+- Push完了
+![picture 8](../../images/a449978d55a49f7ab7d773fab417b4e967b0c476cb51b8691e5e76aaebb4d2a5.png)  
+
+
+
+
+
+
+
+ 
+
+
+## よく使うDockerコマンド
+
+- Dockerイメージを確認する
+```
+docker images
+```
+- 現在起動しているコンテナを確認する
+```
+docker ps
+```
+
+- 現在起動・停止しているコンテナを確認する
+```
+docker ps -a
+```
+
+- コンテナを削除する
+```
+docker rm <コンテナID>
+```
+
+- コンテナを実行する
+```
+$ docker run --name <起動するコンテナにつける名前> -it <イメージ名> /bin/bash
+```
+- 起動したコンテナにログインする
+```
+docker exec -it <コンテナ名> /bin/bash
+```
 
 
 ##　参考記事
@@ -199,5 +350,10 @@ docker push gakuto66/ds-image
     - https://shellscript.sunone.me/tutorial.html
 - からあげさんのDocker使って機械学習入門
  - https://karaage.hatenadiary.jp/entry/2019/05/17/073000
- - さくらナレッジさん
+- さくらナレッジさん
     - https://knowledge.sakura.ad.jp/15253/
+- Dockerでマイクとスピーカーを使う
+    - https://qiita.com/AtsuEngineer/items/30430017837f8b52c69c
+
+- VSCodeでWSL2上のDockerコンテナ内コードをデバッグ
+    - https://qiita.com/c60evaporator/items/fd019f5ac6eb4d612cd4

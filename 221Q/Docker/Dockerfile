@@ -20,7 +20,7 @@ RUN pip install --upgrade setuptools
 RUN python -m pip install jupyterlab
 
 # pyaudioはPortaudioに依存しているため
-RUN apt-get install portaudio19-dev 
+RUN apt-get install -y portaudio19-dev 
 
 # pyaudioのインストール
 RUN pip install pyaudio
