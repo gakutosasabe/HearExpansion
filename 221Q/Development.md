@@ -5,7 +5,20 @@
 # ある方向の音声を増強し、それ以外の方向の音声を減衰させることによって、耳の認識を補助するデバイスの開発
 ## 具体的調査項目
 - Respeakerを用いた音源音源定位のプロトタイプ作成
-- Respeakerもしくは回転する指向性マイク等を使った特定の方向の音声を取ってくるシステムの開発
+- Respeakerもしくは回転する指向性マイク等を使った
+特定の方向の音声を取ってくるシステムの開発
+## 調査
+ライブラリについて
+    - 全部apt-getでとってこれそう
+    - コンテナ開発できそう
+- 
+## 参考資料
+- ReSpeaker4 wiki
+ - https://wiki.seeedstudio.com/ReSpeaker_4_Mic_Array_for_Raspberry_Pi/
+
+- Rasberry pi zeroとRespeakerデモ
+    - https://blog.tkrel.com/6307
+
 # 1Qで培ったSSTの技術やdlibでの顔認識技術を使って、音声のライフログを取る、人類ギャルゲー化計画
 ## 作業項目
 - 声紋認識技術のプロトタイプ作成
