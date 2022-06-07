@@ -11,13 +11,30 @@
 ライブラリについて
     - 全部apt-getでとってこれそう
     - コンテナ開発できそう
-- 
+- こちらのHPを参考にDockerfileを作ってみる
+    - https://blog.tkrel.com/6307
+## Rasberry pi用イメージをUbuntu上で作成する
+- ラズパイのCPUはアーキテクチャーがARMなのでx_86とは違うCPUアーキテクチャーである。なので普通のPC用のDockerイメージとラズパイのDockerイメージに互換性がない。
+- そこでARM用DockerイメージをビルドするためにDockerのbuildx機能を使用する
+
+- Dockerfileがあるディレクトリでbuildx機能を使ってRasberry pi用イメージをビルドする
+```
+docker buildx build --platform linux/arm/v7 .
+```
+- 下記エラーが出てビルドが止まってしまった
+```
+standard_init_linux.go:228: exec user process caused: exec format error
+```
+- 調べたところ、Dockerfileをビルドした私のPCとコンテナを実行するマシンのCPUあー来てsクチャが違うため発生するらしい
+
 ## 参考資料
 - ReSpeaker4 wiki
- - https://wiki.seeedstudio.com/ReSpeaker_4_Mic_Array_for_Raspberry_Pi/
+    - https://wiki.seeedstudio.com/ReSpeaker_4_Mic_Array_for_Raspberry_Pi/
 
 - Rasberry pi zeroとRespeakerデモ
     - https://blog.tkrel.com/6307
+- Rasberry pi上にDockerを構築する
+    - https://qiita.com/k_ken/items/0f2d6af2618618982723
 
 # 1Qで培ったSSTの技術やdlibでの顔認識技術を使って、音声のライフログを取る、人類ギャルゲー化計画
 ## 作業項目
