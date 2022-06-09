@@ -25,7 +25,10 @@ docker buildx build --platform linux/arm/v7 .
 ```
 standard_init_linux.go:228: exec user process caused: exec format error
 ```
-- 調べたところ、Dockerfileをビルドした私のPCとコンテナを実行するマシンのCPUあー来てsクチャが違うため発生するらしい
+- 調べたところ、Dockerfile(Rasberrypi用)でビルドするイメージとビルドした私のPC(Ubuntu)でCPUアーキテクチャが違うため発生するらしい
+- docker builds lsで対応プラットフォームを確認
+![picture 1](../../images/e61c83d79d1f49add275a9c09f80e4442eb1998a43718762dbb7194c6c2e2d3f.png)  
+- arm/v7がない... 試しにamd64でビルドしてみる
 
 ## 参考資料
 - ReSpeaker4 wiki

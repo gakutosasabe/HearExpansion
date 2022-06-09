@@ -11,23 +11,23 @@ ENV LC_ALL ja_JP.UTF-8
 ENV TZ JST-9
 ENV TERM xterm
 
-RUN sudo apt-get update
-RUN sudo apt-get upgrade
-RUN sudo apt-get -y install vim
-RUN sudo apt-get -y install swig
-RUN sudo apt-get -y install libboost-python-dev
-RUN sudo apt-get -y install libpulse-dev
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get -y install vim
+RUN apt-get -y install swig
+RUN apt-get -y install libboost-python-dev
+RUN apt-get -y install libpulse-dev
 RUN pip install pocketsphinx webrtcvad
-RUN sudo apt-get -y install python-pyaudio
-RUN sudo apt-get -y install libasound-dev
-RUN sudo pip install pyaudio respeaker --upgrade
-RUN sudo apt-get -y install portaudio19-dev
-RUN sudo pip install --pre pyusb
-RUN sudo pip install numpy
+RUN apt-get -y install python-pyaudio
+RUN apt-get -y install libasound-dev
+RUN pip install pyaudio respeaker --upgrade
+RUN apt-get -y install portaudio19-dev
+RUN pip install --pre pyusb
+RUN pip install numpy
 RUN mkdir ~/git
 RUN cd ~/git
-RUN sudo apt-get -y install git
+RUN apt-get -y install git
 RUN git clone https://github.com/respeaker/seeed-voicecard.git
 RUN git clone https://github.com/respeaker/mic_array.git
 RUN cd seeed-voicecard
-RUN sudo ./install.sh 4mic
+RUN ./install.sh 4mic
