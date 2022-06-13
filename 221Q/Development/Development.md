@@ -34,6 +34,24 @@ standard_init_linux.go:228: exec user process caused: exec format error
 ```
 $ docker buildx create --name mybuilder
 ```
+- 新しいビルダーを作ってもarm/v7はなかった
+- もう一度Buildxを再インストールしてみる
+    - 下記ページを参考に作ったシェルファイルを走らせる
+    - https://qiita.com/taiyodayo/items/d3f023d951cdccebb592
+    - 意味はなかった
+```
+sh setup_docker_buildx.sh
+```
+- QEMUというプロセッサのエミュレータを下記コマンドでインストールする必要があるよう
+```
+sudo apt-get install qemu-kvm qemu virt-manager virt-viewer libvirt-bin
+```
+- binfmt_miscを有効にする
+
+- その後、下記コマンドを実行してarmをbuildxでビルドできるようにする
+```
+docker run --privileged --rm tonistiigi/binfmt --install all
+```
 
 ## 参考資料
 - ReSpeaker4 wiki
@@ -43,6 +61,8 @@ $ docker buildx create --name mybuilder
     - https://blog.tkrel.com/6307
 - Rasberry pi上にDockerを構築する
     - https://qiita.com/k_ken/items/0f2d6af2618618982723
+- Docker buildxでarmがない
+    - https://www.chazine.com/archives/4296
 
 # 1Qで培ったSSTの技術やdlibでの顔認識技術を使って、音声のライフログを取る、人類ギャルゲー化計画
 ## 作業項目
