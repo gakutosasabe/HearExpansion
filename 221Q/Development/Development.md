@@ -28,30 +28,37 @@ standard_init_linux.go:228: exec user process caused: exec format error
 - 調べたところ、Dockerfile(Rasberrypi用)でビルドするイメージとビルドした私のPC(Ubuntu)でCPUアーキテクチャが違うため発生するらしい
 - docker builds lsで対応プラットフォームを確認
 ![picture 1](../../images/e61c83d79d1f49add275a9c09f80e4442eb1998a43718762dbb7194c6c2e2d3f.png)  
+
 - arm/v7がない... 試しにamd64でビルドしてみると通った
 - デフォルトのビルダーの中にはarm/v7が入っていないことが原因の様子
-- 新しいビルダーを作ってみる
-```
-$ docker buildx create --name mybuilder
-```
-- 新しいビルダーを作ってもarm/v7はなかった
-- もう一度Buildxを再インストールしてみる
-    - 下記ページを参考に作ったシェルファイルを走らせる
-    - https://qiita.com/taiyodayo/items/d3f023d951cdccebb592
-    - 意味はなかった
-```
-sh setup_docker_buildx.sh
-```
-- QEMUというプロセッサのエミュレータを下記コマンドでインストールする必要があるよう
-```
-sudo apt-get install qemu-kvm qemu virt-manager virt-viewer libvirt-bin
-```
-- binfmt_miscを有効にする
 
-- その後、下記コマンドを実行してarmをbuildxでビルドできるようにする
+- 下記コマンドを実行してarmをbuildxでビルドできるようにする
 ```
 docker run --privileged --rm tonistiigi/binfmt --install all
 ```
+
+- 次にQEMUというプロセッサのエミュレータを下記コマンドでインストールする
+```
+sudo apt-get install qemu-kvm qemu virt-manager virt-viewer libvirt-bin
+```
+- qemu-binfmt-conf.shというqemuをLinuxで動かすように設定するファイルを落として実行権限を与え、移動する
+```
+wget https://raw.githubusercontent.com/qemu/qemu/master/scripts/qemu-binfmt-conf.sh
+chmod +x qemu-binfmt-conf.sh
+sudo mv qemu-binfmt-conf.sh /usr/local/bin/qemu-binfmt-conf.sh
+```
+- qemu-binfmt-conf.shの場所に移動する
+```
+cd /usr/local/bin/
+```
+- 下記コマンドでOS立ち上げ時にqemu-binfmt-conf.shが実行されるようにする
+```
+sudo ./qemu-binfmt-conf.sh --persistent yes --qemu-path /usr/bin --qemu-suffix -static --systemd aarch64
+sudo ./qemu-binfmt-conf.sh --persistent yes --qemu-path /usr/bin --qemu-suffix -static --systemd arm
+```
+- PCを再起動する
+
+
 
 ## 参考資料
 - ReSpeaker4 wiki
