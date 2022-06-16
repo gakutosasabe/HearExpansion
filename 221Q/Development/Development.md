@@ -58,6 +58,8 @@ sudo ./qemu-binfmt-conf.sh --persistent yes --qemu-path /usr/bin --qemu-suffix -
 ```
 - PCを再起動する
 
+- そもそもちゃんとQEMUがインストールできていない感がある
+    - docker run --privileged --rm tonistiigi/binfmt --install all
 
 
 ## 参考資料
@@ -70,6 +72,12 @@ sudo ./qemu-binfmt-conf.sh --persistent yes --qemu-path /usr/bin --qemu-suffix -
     - https://qiita.com/k_ken/items/0f2d6af2618618982723
 - Docker buildxでarmがない
     - https://www.chazine.com/archives/4296
+- PC 上の Linux で、Raspberry Pi 用の Docker イメージを作る
+    - https://flogics.com/wp/ja/2019/11/building-docker-image-for-raspberry-pi-by-buildx/
+    - https://www.yukkuriikouze.com/2020/10/20/3984/
+- クラウドでRasberryppi用イメージをビルドする
+    - https://www.slideshare.net/ShunsukeKikuchi1/raspberry-pi-147400803
+    - https://tkzwhr.hatenablog.com/entry/2021/05/23/125509
 
 # 1Qで培ったSSTの技術やdlibでの顔認識技術を使って、音声のライフログを取る、人類ギャルゲー化計画
 ## 作業項目
