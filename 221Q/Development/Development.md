@@ -61,6 +61,57 @@ sudo ./qemu-binfmt-conf.sh --persistent yes --qemu-path /usr/bin --qemu-suffix -
 - そもそもちゃんとQEMUがインストールできていない感がある
     - docker run --privileged --rm tonistiigi/binfmt --install all
 
+## Rasberrypi4で音源定位を試す
+- 音源定位にはRespeaker4というラズパイの拡張ユニットを使う
+- 必要なパッケージをインストールして再起動するシェルスクリプトを作った
+
+```
+sudo apt-get update
+sudo apt-get  install -y
+sudo apt-get -y install vim
+sudo apt-get -y install python-pip
+sudo apt-get -y install python-dev
+sudo apt-get -y install swig
+sudo apt-get -y install libboost-python-dev
+sudo apt-get -y install libpulse-dev
+sudo apt-get -y install libasound2-dev
+sudo pip install pocketsphinx webrtcvad
+sudo apt-get -y install portaudio19-dev
+sudo apt-get -y install python-pyaudio
+sudo apt-get -y install libasound-dev
+sudo pip install pyaudio respeaker --upgrade
+sudo pip install --pre pyusb
+sudo pip install numpy
+sudo mkdir ~/git
+sudo cd ~/git
+sudo apt-get -y install git
+sudo git clone https://github.com/respeaker/seeed-voicecard.git
+sudo git clone https://github.com/respeaker/mic_array.git
+sudo cd seeed-voicecard && ./install.sh　4mic
+sudo reboot
+```
+- その後下記コマンドを実行してオーディオの設定を行う
+```
+sudo raspi-config
+```
+- 7 Advanced Optionsを選択
+- A4. Audioを選択
+- 1 Force 3.5mm('headphone') jackを→キーで選択したあと<了解>を選択
+- mic_arrayの下mic.array.pyを編集
+   - 最後のgy等のtest_8mic()→test_4mic()に変更
+```
+if __name__ == '__main__':
+    test_4mic()
+   #  test_8mic()
+
+```
+   - import Queue —> import queueに変える 
+   - self.queue = Queue.Queue() —> self.queue = queue.Queue() 
+
+- mic_array.pyを実行する
+
+
+
 
 ## 参考資料
 - ReSpeaker4 wiki
@@ -78,6 +129,9 @@ sudo ./qemu-binfmt-conf.sh --persistent yes --qemu-path /usr/bin --qemu-suffix -
 - クラウドでRasberryppi用イメージをビルドする
     - https://www.slideshare.net/ShunsukeKikuchi1/raspberry-pi-147400803
     - https://tkzwhr.hatenablog.com/entry/2021/05/23/125509
+
+- Raspi3でRespeakerを使う
+    - https://uepon.hatenadiary.com/entry/2017/11/30/235637
 
 # 1Qで培ったSSTの技術やdlibでの顔認識技術を使って、音声のライフログを取る、人類ギャルゲー化計画
 ## 作業項目
