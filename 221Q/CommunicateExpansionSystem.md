@@ -29,3 +29,6 @@
 
 ## DFD0
 ![picture 3](../images/95624cec5d045a8ade8b0f438b96950349fa098dc70a6d9cb3f915cd86573bab.png)  
+
+## DFD1(周囲からの音を監視する)
+![picture 1](../images/62c5ba6545525286505924d549801bc90873f8fc906874389760330b7db54824.png)  
