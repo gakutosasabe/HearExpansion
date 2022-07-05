@@ -18,6 +18,7 @@
 - https://app.diagrams.net/#G1u4P6laaxGUMf6MBjp7q2eMRGZb4mqWu4
 
 ## データ辞書
+
 会議開始指示 = "MeetingStart”の声
 会議終了指示 = "MeetingEnded”の声
 音方向 = 一番音が大きい方向(0~360deg)
@@ -26,9 +27,16 @@
 縦回転指示 = *モーターを縦方向に回転させる制御*
 議事録　＝ 会議開始日時＋発言＋会議終了日時
 文字起こしした文字　＝　会議中の一番最近の発言テキスト
+文字起こし開始・終了 = [文字起こし開始|文字起こし終了]
+文字起こし結果 = [文字起こしテキストあり|文字起こしテキストなし]
+制御開始　＝ 角度　＋　Start
+制御完了　＝　[制御完了|エラー]
 
 ## DFD0
-![picture 3](../images/95624cec5d045a8ade8b0f438b96950349fa098dc70a6d9cb3f915cd86573bab.png)  
+![picture 3](../images/557363eff41e59e43228f683497dbcdc870e098ee3f525816f1d8fe084f616b1.png)  
 
-## DFD1(周囲からの音を監視する)
-![picture 1](../images/62c5ba6545525286505924d549801bc90873f8fc906874389760330b7db54824.png)  
+
+## モジュール構造図
+
+![picture 2](../images/961a8f0202df8ca79654e9be1578227a4a26873fff42d75950da059a7c6d6e13.png)  
+
