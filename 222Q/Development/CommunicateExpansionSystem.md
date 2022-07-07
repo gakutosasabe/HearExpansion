@@ -14,7 +14,7 @@
 
 
 ## コンテキスト図
-![picture 2](../images/f350affe5748fadb673133716738dd0da2269e79074696240b9d063d8f5faa3c.png)  
+![picture 2](../../images/f350affe5748fadb673133716738dd0da2269e79074696240b9d063d8f5faa3c.png)  
 - https://app.diagrams.net/#G1u4P6laaxGUMf6MBjp7q2eMRGZb4mqWu4
 
 ## データ辞書
@@ -33,10 +33,17 @@
 制御完了　＝　[制御完了|エラー]
 
 ## DFD0
-![picture 3](../images/557363eff41e59e43228f683497dbcdc870e098ee3f525816f1d8fe084f616b1.png)  
+![picture 3](../../images/557363eff41e59e43228f683497dbcdc870e098ee3f525816f1d8fe084f616b1.png)  
 
 
 ## モジュール構造図
 
-![picture 2](../images/961a8f0202df8ca79654e9be1578227a4a26873fff42d75950da059a7c6d6e13.png)  
+![picture 2](../../images/961a8f0202df8ca79654e9be1578227a4a26873fff42d75950da059a7c6d6e13.png)  
 
+## 実装
+
+### 参考資料
+
+- Rasberry pi でモーターを動かす
+    - https://monomonotech.jp/kurage/raspberrypi/servo.html
+    
