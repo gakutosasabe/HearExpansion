@@ -2,20 +2,21 @@ import time
 
 # GPIOの初期設定
 import RPi.GPIO as GPIO
-GPIO.setMode(GPIO.BCM)
 
-# GPIO04をPWM設定、周波数は50Hz
-p = GPIO.PWM(4, 50)
-
-# Dutiy Cycle 0％
-p.start(0.0)
-
-class MotorControl():
-    def __init__(self, pin, frequency):
+class SG92R_Control():
+    def __init__(self, pin):
         # GPIO4(仮)を出力端子設定
-        GPIO.setup(pin, GPIO.OUT)
-        p = GPIO.PWM(pin,frequency)
+        self.mpin = pin
+        GPIO.setup(self.mPin, GPIO.OUT)
+        self.mPwm = GPIO.PWM(self.mPin,50)
     
-    def rotate_motor(self,degree):
-        
+    def SetPos(self,pos): #位置セット
+        #Duty ratio = 2.5 ~ 12.0% : 0.5ms~2.4ms : 0~ 180deg
+        duty = (12-2.5)/180*pos + 2.5 
+        self.mPwm.start(duty)
+
+    def Cleanup(self): #0degにして終了
+        self.SetPos(90)
+        time.sleep(1)
+        GPIO.setup(self.mPin, GPIO.IN)
         
