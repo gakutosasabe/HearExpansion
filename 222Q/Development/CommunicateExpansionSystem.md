@@ -43,7 +43,9 @@
 ## 実装
 
 ### 参考資料
-
+- デューティー比と角度
+    - https://fujimoostudios.org/?p=204
 - Rasberry pi でモーターを動かす
     - https://monomonotech.jp/kurage/raspberrypi/servo.html
-    
+- Raspy Servo 講座
+    - https://sites.google.com/site/memorandumjavaandalgorithm/raspberry-pi-jiang-zuo7-servo-sg90-sg92
