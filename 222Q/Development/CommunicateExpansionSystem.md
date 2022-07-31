@@ -37,11 +37,15 @@
 
 
 ## モジュール構造図
-
-![picture 2](../../images/961a8f0202df8ca79654e9be1578227a4a26873fff42d75950da059a7c6d6e13.png)  
+![picture 1](../../images/a0fab76c43eeb5de8730ac48e02b1d2eeb36a6287db0d0a8790587afaae961b8.png)  
 
 ## 実装
-
+### respeaker.py
+- 音の方向を得る
+    - mic_array.pyのgetdirection関数
+- ODASを使うと、音源定位、トラッキング、分離、ポストフィルタリングができ、その結果をJSON形式でsocket通信でゲットすることができるらしい
+### 参考資料
+- ODASに関する論文⇒[ココ](222Q\Development\Reference\2103.03954.pdf)
 ### 参考資料
 - デューティー比と角度
     - https://fujimoostudios.org/?p=204
