@@ -1,19 +1,26 @@
 # coding: UTF-8
-import speech_recognition as sr
-import pyaudio
-import time
-from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
-import numpy as np
-from scipy.stats import norm
 import threading
+import time
+
 import librosa
+import numpy as np
 import pyworld
+import speech_recognition as sr
+from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
+from scipy.stats import norm
+
+import pyaudio
 
 censor_words = ["こんにちは","ドラえもん","みやさん","バカ","アホ","まぬけ"] #検閲ワード（仮)
-formant_conversion = False #フォルマント変換による音声加工
+
+ENABLE_FORMANT_CONV = True # フォルマント変換による音声加工を有効にするかどうか
+ENABLE_WORD_RECOGNITION = False # 単語の検閲モードを有効にするかどうか
+
 def convert(signal):
-    f0_rate = 2.4
-    sp_rate = 0.78
+    #f0_rate = 2.4
+    #sp_rate = 0.78
+    f0_rate = 1.9
+    sp_rate = 0.75
     sample_rate = 16000
 
     f0, t = pyworld.dio(signal, sample_rate)
@@ -156,7 +163,7 @@ class AudioFilter():
     
     # コールバック関数（再生が必要なときに呼び出される）
     def callback(self, in_data, frame_count, time_info, status):
-        if formant_conversion == True:
+        if ENABLE_FORMANT_CONV == True:
             decoded_data = np.frombuffer(in_data, np.int16).copy()
             chunk_size = len(decoded_data)
 
@@ -332,35 +339,32 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     # ノンブロッキングなのでこの中で音声認識・音の変換などを行う
     while af.stream.is_active():
         #print("なんの処理をしてもOK")
-        r = sr.Recognizer()
-        with sr.Microphone() as source: # pyaudioを使ってマイクを認識？
-            r.adjust_for_ambient_noise(source)
-            print("音声を読み取っています")
-            audio = r.listen(source)
-            try:
-                query = r.recognize_google(audio, language='ja-JP')
-                print(query)
-                words_detect = ace.character_search(query, censor_words)
-                if words_detect == True:
-                    aco.set_enhanced_volume()
-                    mute_timer = Timer()
-            except:
-                print("エラー")
-            
-            volume_now = aco.process_volume()
-            if round(volume_now, 2) == aco.enhancedvolume: # 現在のボリュームが耳拡張ボリュームだった場合にデフォルトボリュームに戻す
-                if mute_timer.is_time_out(5) :
-                    aco.set_volume(aco.defaultvolume)
+        if ENABLE_WORD_RECOGNITION:
+            r = sr.Recognizer()
+            with sr.Microphone() as source: # pyaudioを使ってマイクを認識？
+                r.adjust_for_ambient_noise(source)
+                print("音声を読み取っています")
+                audio = r.listen(source)
+                try:
+                    query = r.recognize_google(audio, language='ja-JP')
+                    print(query)
+                    words_detect = ace.character_search(query, censor_words)
+                    if words_detect == True:
+                        aco.set_enhanced_volume()
+                        mute_timer = Timer()
+                except:
+                    print("エラー")
+                
+                volume_now = aco.process_volume()
+                if round(volume_now, 2) == aco.enhancedvolume: # 現在のボリュームが耳拡張ボリュームだった場合にデフォルトボリュームに戻す
+                    if mute_timer.is_time_out(5) :
+                        aco.set_volume(aco.defaultvolume)
+        else:
+            time.sleep(1)
 
     # ストリーミングを止める
-
     worker_th.stop()
     af.stream.stop_stream()
     af.stream.close()
     af.close()
-
-
-
-
-
 
