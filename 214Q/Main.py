@@ -150,6 +150,9 @@ class AudioFilter():
     def __init__(self, worker, block_length, margin_length):
         self.p = pyaudio.PyAudio()
 
+        for i in range(self.p.get_device_count()):
+            print(self.p.get_device_info_by_index(i))
+
         self.channels = 1 #マイクがモノラルの場合は1    #現在1じゃないと動かない
         self.rate = 16000 #DVDレベルなので重かったら16000    #現在16000じゃないと動かない
 
@@ -160,7 +163,7 @@ class AudioFilter():
             channels = self.channels,
             rate = self.rate,
             frames_per_buffer=1024,
-            input_device_index = input_index,
+            input_device_index = 5,
             output_device_index = output_index,
             output = True,
             input = True,
