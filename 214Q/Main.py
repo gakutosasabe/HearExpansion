@@ -1,7 +1,7 @@
 # coding: UTF-8
 import threading
 import time
-
+import tkinter as tk
 import librosa
 import numpy as np
 import pyworld
@@ -16,11 +16,30 @@ censor_words = ["こんにちは","ドラえもん","みやさん","バカ","ア
 ENABLE_FORMANT_CONV = True # フォルマント変換による音声加工を有効にするかどうか
 ENABLE_WORD_RECOGNITION = False # 単語の検閲モードを有効にするかどうか
 
-def convert(signal):
+def change_voice_parameter():
+    selected_value = var.get()
+    f0_rate = 0.0
+    sp_rate = 0.0
+
+    if selected_value == "high":
+        f0_rate = 3.0
+        sp_rate = 2.0
+    elif selected_value == "criminal":
+        f0_rate = 1.2
+        sp_rate = 0.5
+    elif selected_value == "low":
+        f0_rate = 0.3
+        sp_rate = 1.0
+    elif selected_value == "robot":
+        f0_rate = 0.4
+        sp_rate = 0.88
+    return f0_rate,sp_rate
+
+
+
+def convert(signal,f0_rate,sp_rate):
     #f0_rate = 2.4
     #sp_rate = 0.78
-    f0_rate = 1.9
-    sp_rate = 0.75
     sample_rate = 16000
 
     f0, t = pyworld.dio(signal, sample_rate)
@@ -72,7 +91,8 @@ class WorkerThread(threading.Thread):
 
                 # pitch sift
                 sample = sample.astype(np.float64)
-                sample = convert(sample)
+                f0_rate,sp_rate = change_voice_parameter()
+                sample = convert(sample,f0_rate,sp_rate)
 
                 # overlap
                 self.prev_samples.append(sample)
@@ -335,6 +355,23 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     
     #ストリーミングを始める
     af.stream.start_stream()
+
+    root = tk.Tk()
+    root.title("ボイス選択")
+    # ラジオボタンの作成
+    var = tk.StringVar()
+    robot_button = tk.Radiobutton(root, text="ロボットボイス", variable=var, value="robot" )
+    low_button = tk.Radiobutton(root, text="イケメンボイス", variable=var, value="low" )
+    high_button = tk.Radiobutton(root, text="美少女ボイス", variable=var, value="high")
+    criminal_button = tk.Radiobutton(root, text="犯罪者ボイス", variable=var, value="criminal")
+
+    # ボタンの配置
+    robot_button.pack()
+    low_button.pack()
+    high_button.pack()
+    criminal_button.pack()
+
+    root.mainloop()
 
     # ノンブロッキングなのでこの中で音声認識・音の変換などを行う
     while af.stream.is_active():
