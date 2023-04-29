@@ -8,6 +8,8 @@ import pyworld
 import speech_recognition as sr
 from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
 from scipy.stats import norm
+from PIL import Image, ImageTk
+
 
 import pyaudio
 
@@ -25,7 +27,9 @@ def update_image():
         img_label.config(image=crimate_img)
     elif var.get() == "robot":
         img_label.config(image=robot_img)
-
+    elif var.get() == "normal":
+        img_label.config(image=normal_img)
+        
 def change_voice_parameter():
     selected_value = var.get()
     f0_rate = 0.0
@@ -374,14 +378,31 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     af.stream.start_stream()
 
     root = tk.Tk()
-    root.geometry("1200x650")
-    root.title("ボイス選択")
+    root.geometry("1920x1080")
+    root.title("美少女ヘッドフォンver1.5")
+
+    #画像をオープン
+    high = Image.open("high.png")
+    low = Image.open("low.png")
+    crimate = Image.open("crimate.png")
+    robot = Image.open("robot.png")
+    normal = Image.open("normal.PNG")
+    # 画像のサイズを変更
+    rhigh = high.resize((800, 800))
+    rlow = low.resize((800, 800))
+    rcrimate = crimate.resize((800, 800))
+    rrobot = robot.resize((800, 800))
+    rnormal = normal.resize((800, 800))
+
+
+
 
     # 画像を読み込む
-    low_img = tk.PhotoImage(file="low.png")
-    high_img = tk.PhotoImage(file="high.png")
-    crimate_img = tk.PhotoImage(file="crimate.PNG")
-    robot_img = tk.PhotoImage(file="robot.png")
+    low_img = ImageTk.PhotoImage(rlow)
+    high_img = ImageTk.PhotoImage(rhigh)
+    crimate_img = ImageTk.PhotoImage(rcrimate)
+    robot_img = ImageTk.PhotoImage(rrobot)
+    normal_img = ImageTk.PhotoImage(rnormal)
 
 
 
@@ -391,11 +412,11 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     # 画像の読み込み
     img_label = tk.Label(root, image=high_img)
 
-    font = ("Helvetica", 35)
+    font = ("游ゴシック", 35)
     robot_button = tk.Radiobutton(root, text="ロボットボイス", variable=var, value="robot",font=font,command = update_image)
     low_button = tk.Radiobutton(root, text="イケメンボイス", variable=var, value="low",font=font,command = update_image)
     high_button = tk.Radiobutton(root, text="美少女ボイス", variable=var, value="high",font=font,command = update_image)
-    criminal_button = tk.Radiobutton(root, text="犯罪者ボイス", variable=var, value="criminal",font=font,command = update_image)
+    criminal_button = tk.Radiobutton(root, text="犯人ボイス", variable=var, value="criminal",font=font,command = update_image)
     normal_button = tk.Radiobutton(root, text="そのまま", variable=var, value="normal",font=font,command = update_image)
 
     # ラジオボタンのサイズを大きくする
@@ -407,30 +428,38 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     criminal_button.config(indicatoron=False, width=width_size, height=height_size)
     normal_button.config(indicatoron=False, width=width_size, height=height_size)
 
+    #テキストの作成
+    text = tk.Label(text="マイクを通した声が色んな声に変化するよ！ヘッドフォンをつけてみてね！",font=font)
+    
+    # テキストの配置
+    text.place(
+        x=20,
+        y=20
+    )
     # ボタンの配置
     normal_button.place(
         x=0,
-        y=0
+        y=50
     )
     robot_button.place(
         x=0,
-        y=150
+        y=250
     )
     low_button.place(
         x=0,
-        y=300
+        y=450
     )
     high_button.place(
         x=0,
-        y=450
+        y=650
     )
     criminal_button.place(
         x=0,
-        y=600
+        y=850
     )
     img_label.place(
-        x=500,
-        y=0
+        x=800,
+        y=150
     )
 
     root.mainloop()
