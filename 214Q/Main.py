@@ -29,7 +29,7 @@ def update_image():
         img_label.config(image=robot_img)
     elif var.get() == "normal":
         img_label.config(image=normal_img)
-        
+
 def change_voice_parameter():
     selected_value = var.get()
     f0_rate = 0.0
@@ -429,7 +429,8 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     normal_button.config(indicatoron=False, width=width_size, height=height_size)
 
     #テキストの作成
-    text = tk.Label(text="マイクを通した声が色んな声に変化するよ！ヘッドフォンをつけてみてね！",font=font)
+    font_t = ("游ゴシック", 40,"bold")
+    text = tk.Label(text="マイクを通した声が色んな声に変化するよ！ヘッドフォンをつけてみてね！",font=font_t)
     
     # テキストの配置
     text.place(
