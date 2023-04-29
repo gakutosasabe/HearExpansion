@@ -32,17 +32,21 @@ def change_voice_parameter():
     sp_rate = 0.0
 
     if selected_value == "high":
-        f0_rate = 2.9
-        sp_rate = 1.2
+        f0_rate = 2.4
+        sp_rate = 0.78
     elif selected_value == "criminal":
         f0_rate = 1.2
         sp_rate = 0.5
     elif selected_value == "low":
-        f0_rate = 0.5
-        sp_rate = 1.0
+        f0_rate = 0.8
+        sp_rate = 1.4
     elif selected_value == "robot":
-        f0_rate = 0.3
-        sp_rate = 0.68
+        f0_rate = 0.5
+        sp_rate = 2.4
+    elif selected_value == "normal":
+        f0_rate = 1.0
+        sp_rate = 1.0
+    
     return f0_rate,sp_rate
 
 
@@ -163,7 +167,7 @@ class AudioFilter():
             channels = self.channels,
             rate = self.rate,
             frames_per_buffer=1024,
-            input_device_index = 5,
+            input_device_index = 1,
             output_device_index = output_index,
             output = True,
             input = True,
@@ -385,13 +389,14 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     var = tk.StringVar()
 
     # 画像の読み込み
-    img_label = tk.Label(root, image=low_img)
+    img_label = tk.Label(root, image=high_img)
 
     font = ("Helvetica", 35)
     robot_button = tk.Radiobutton(root, text="ロボットボイス", variable=var, value="robot",font=font,command = update_image)
     low_button = tk.Radiobutton(root, text="イケメンボイス", variable=var, value="low",font=font,command = update_image)
     high_button = tk.Radiobutton(root, text="美少女ボイス", variable=var, value="high",font=font,command = update_image)
     criminal_button = tk.Radiobutton(root, text="犯罪者ボイス", variable=var, value="criminal",font=font,command = update_image)
+    normal_button = tk.Radiobutton(root, text="そのまま", variable=var, value="normal",font=font,command = update_image)
 
     # ラジオボタンのサイズを大きくする
     height_size = 3
@@ -400,23 +405,28 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     low_button.config(indicatoron=False, width=width_size, height=height_size)
     high_button.config(indicatoron=False, width=width_size, height=height_size)
     criminal_button.config(indicatoron=False, width=width_size, height=height_size)
+    normal_button.config(indicatoron=False, width=width_size, height=height_size)
 
     # ボタンの配置
-    robot_button.place(
+    normal_button.place(
         x=0,
         y=0
     )
-    low_button.place(
+    robot_button.place(
         x=0,
         y=150
     )
-    high_button.place(
+    low_button.place(
         x=0,
         y=300
     )
-    criminal_button.place(
+    high_button.place(
         x=0,
         y=450
+    )
+    criminal_button.place(
+        x=0,
+        y=600
     )
     img_label.place(
         x=500,
