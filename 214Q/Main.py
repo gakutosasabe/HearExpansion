@@ -413,14 +413,15 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     img_label = tk.Label(root, image=high_img)
 
     font = ("游ゴシック", 35)
+    normal_button = tk.Radiobutton(root, text="そのまま", variable=var, value="normal",font=font,command = update_image)
     robot_button = tk.Radiobutton(root, text="ロボットボイス", variable=var, value="robot",font=font,command = update_image)
     low_button = tk.Radiobutton(root, text="イケメンボイス", variable=var, value="low",font=font,command = update_image)
     high_button = tk.Radiobutton(root, text="美少女ボイス", variable=var, value="high",font=font,command = update_image)
     criminal_button = tk.Radiobutton(root, text="犯人ボイス", variable=var, value="criminal",font=font,command = update_image)
-    normal_button = tk.Radiobutton(root, text="そのまま", variable=var, value="normal",font=font,command = update_image)
+
 
     # ラジオボタンのサイズを大きくする
-    height_size = 3
+    height_size = 2
     width_size = 15
     robot_button.config(indicatoron=False, width=width_size, height=height_size)
     low_button.config(indicatoron=False, width=width_size, height=height_size)
@@ -429,7 +430,7 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     normal_button.config(indicatoron=False, width=width_size, height=height_size)
 
     #テキストの作成
-    font_t = ("游ゴシック", 40,"bold")
+    font_t = ("游ゴシック", 30,"bold")
     text = tk.Label(text="マイクを通した声が色んな声に変化するよ！ヘッドフォンをつけてみてね！",font=font_t)
     
     # テキストの配置
@@ -444,23 +445,23 @@ if __name__ == "__main__": #importされた場合に実行しないようにす�
     )
     robot_button.place(
         x=0,
-        y=250
+        y=200
     )
     low_button.place(
         x=0,
-        y=450
+        y=350
     )
     high_button.place(
         x=0,
-        y=650
+        y=500
     )
     criminal_button.place(
         x=0,
-        y=850
+        y=650
     )
     img_label.place(
-        x=800,
-        y=150
+        x=500,
+        y=100
     )
 
     root.mainloop()
