@@ -50,3 +50,10 @@ pip install mediapipe
 ```
 
 - これでMediapipe動くようになったけど，ラズパイの方がver0.8.4でWindowsの方が0.10.0なので色々使い方が違ってくるかもなぁ
+
+- mediapipeのサンプルを落としてきて実行
+```
+$ git clone https://github.com/Kazuhito00/mediapipe-python-sample
+$ cd mediapipe-python-sample
+$ python3 sample_hand.py
+```
