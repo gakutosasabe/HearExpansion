@@ -60,15 +60,32 @@ def main():
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
+    while True:
+        # カメラキャプチャ　###############################################################
+        ret, image = cap.read()
+        if not ret:
+            break
+        image = cv.flip(image, 1) #ミラー表示
 
-    posX,posY,posZ,sizeW,sizeH = culculate_face_pos_and_size(video)
+        # 検出実施　###############################################################
+        image = cv.cvtColor(image, cv.COLOR_BAYER_BG2RGB)
+
+        # 顔位置＆場所検出 ###############################################################
+        posX,posY,posZ,sizeW,sizeH = culculate_face_pos_and_size(cap)
+    
+    
+    
+    
+    
     faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,video)
     girlimage = conv_face2girl(faceimage)
 
     
     return
 
-def culculate_face_pos_and_size(video):
+def culculate_face_pos_and_size(image):
+
+    
     
     return posX,posY,posZ,sizeW,sizeH
 
