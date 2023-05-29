@@ -41,24 +41,33 @@ def main():
     args = get_args()
 
     cap_device = args.device
-    cap_width = 960
-    cap_height = 540
+    cap_width = args.width
+    cap_height = args.height
 
-    model_complexity = args.model_complexity
-
-    max_num_hands = args.max_num_hands
+    max_num_faces = args.max_num_faces
+    refine_landmarks = args.refine_landmarks
     min_detection_confidence = args.min_detection_confidence
     min_tracking_confidence = args.min_tracking_confidence
 
     use_brect = args.use_brect
-    plot_world_landmark = args.plot_world_landmark
-
 
 
     # カメラ準備　###############################################################
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
+
+    # モデルロード　###############################################################
+    mp_face_mesh = mp.solutions.face_mesh
+    mp_face_mesh = mp_face_mesh.FaceMesh(
+        max_num_faces=max_num_faces,
+        refine_landmarks=refine_landmarks,
+        min_detection_confidence=min_detection_confidence,
+        min_tracking_confidence=min_tracking_confidence,
+    )
+
+    # FPS計測モジュール ########################################################
+    CvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     while True:
         # カメラキャプチャ　###############################################################
@@ -71,13 +80,13 @@ def main():
         image = cv.cvtColor(image, cv.COLOR_BAYER_BG2RGB)
 
         # 顔位置＆場所検出 ###############################################################
-        posX,posY,posZ,sizeW,sizeH = culculate_face_pos_and_size(cap)
+        posX,posY,posZ,sizeW,sizeH = culculate_face_pos_and_size(image)
     
     
     
     
     
-    faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,video)
+    faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,image)
     girlimage = conv_face2girl(faceimage)
 
     
