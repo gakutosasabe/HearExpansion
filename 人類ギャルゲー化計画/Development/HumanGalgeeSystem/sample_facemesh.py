@@ -9,7 +9,6 @@ import mediapipe as mp
 
 from utils import CvFpsCalc
 
-
 def get_args():
     parser = argparse.ArgumentParser()
 
