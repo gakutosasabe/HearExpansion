@@ -13,28 +13,20 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--model_complexity",
-                        help='model_complexity(0,1(default))',
-                        type=int,
-                        default=1)
+    parser.add_argument("--width", help='cap width', type=int, default=960)
+    parser.add_argument("--height", help='cap height', type=int, default=540)
 
-    parser.add_argument("--max_num_hands", type=int, default=2)
+    parser.add_argument("--model_selection", type=int, default=0)
     parser.add_argument("--min_detection_confidence",
                         help='min_detection_confidence',
                         type=float,
                         default=0.7)
-    parser.add_argument("--min_tracking_confidence",
-                        help='min_tracking_confidence',
-                        type=int,
-                        default=0.5)
 
     parser.add_argument('--use_brect', action='store_true')
-    parser.add_argument('--plot_world_landmark', action='store_true')
 
     args = parser.parse_args()
 
     return args
-
 
 def main():
     # 引数解析 ###############################################################
@@ -44,10 +36,8 @@ def main():
     cap_width = args.width
     cap_height = args.height
 
-    max_num_faces = args.max_num_faces
-    refine_landmarks = args.refine_landmarks
+    model_selection = args.model_selection
     min_detection_confidence = args.min_detection_confidence
-    min_tracking_confidence = args.min_tracking_confidence
 
     use_brect = args.use_brect
 
@@ -58,16 +48,14 @@ def main():
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
     # モデルロード　###############################################################
-    mp_face_mesh = mp.solutions.face_mesh
-    mp_face_mesh = mp_face_mesh.FaceMesh(
-        max_num_faces=max_num_faces,
-        refine_landmarks=refine_landmarks,
+    mp_face_detection = mp.solutions.face_detection
+    face_detection = mp_face_detection.FaceDetection(
+        model_selection=model_selection,
         min_detection_confidence=min_detection_confidence,
-        min_tracking_confidence=min_tracking_confidence,
     )
 
     # FPS計測モジュール ########################################################
-    CvFpsCalc = CvFpsCalc(buffer_len = 10)
+    cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     while True:
         # カメラキャプチャ　###############################################################
@@ -75,28 +63,50 @@ def main():
         if not ret:
             break
         image = cv.flip(image, 1) #ミラー表示
+        image = copy.deepcopy(image)
 
         # 検出実施　###############################################################
-        image = cv.cvtColor(image, cv.COLOR_BAYER_BG2RGB)
+        #image = cv.cvtColor(image, cv.COLOR_RGB)
+        results = face_detection.process(image)
 
         # 顔位置＆場所検出 ###############################################################
-        posX,posY,posZ,sizeW,sizeH = culculate_face_pos_and_size(image)
+        if results.detections is not None:
+            for detection in results.detections:
+                # 描画
+                image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
+    
+        # キー処理(ESC：終了) #################################################
+        key = cv.waitKey(1)
+        if key == 27:  # ESC
+            break
+
+        # 画面反映 #############################################################
+        cv.imshow('MediaPipe Face Detection Demo', image)
+    
+    cap.release()
+    cv.destroyAllWindows()
     
     
     
-    
-    
-    faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,image)
-    girlimage = conv_face2girl(faceimage)
+    #faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,image)
+    #girlimage = conv_face2girl(faceimage)
 
     
     return
 
-def culculate_face_pos_and_size(image):
-
+def culculate_face_pos_and_size(image,detection):
+    image_width, image_height = image.shape[1], image.shape[0]
+    #顔のx座標,y座標,幅，高さを抽出
+    bbox = detection.location_data.relative_bounding_box
+    posX = int(bbox.xmin * image_width)
+    posY = int(bbox.ymin * image_height)
+    sizeW = int(bbox.width * image_width)
+    sizeH = int(bbox.height * image_height)
     
+    cv.putText(image, "posX:" + str(posX) + " posY:" + str(posY) + " sizeW" + str(sizeW) + " sizeH" + str(sizeH),
+               (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)
     
-    return posX,posY,posZ,sizeW,sizeH
+    return image, posX,posY,sizeW,sizeH
 
 def resize_illustsize(image,posZ):
 
