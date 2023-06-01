@@ -94,9 +94,9 @@ def main():
     
     return
 
+# 顔のx座標,y座標,幅，高さを抽出　###############################################################
 def culculate_face_pos_and_size(image,detection):
     image_width, image_height = image.shape[1], image.shape[0]
-    #顔のx座標,y座標,幅，高さを抽出
     bbox = detection.location_data.relative_bounding_box
     posX = int(bbox.xmin * image_width)
     posY = int(bbox.ymin * image_height)
@@ -108,9 +108,10 @@ def culculate_face_pos_and_size(image,detection):
     
     return image, posX,posY,sizeW,sizeH
 
-def resize_illustsize(image,posZ):
+def overlay_illust(image,posX,posY,sizeH):
+    laugh_man = cv.imread("../image/warai_flat.png")
 
-    return resize_image
+    return image
 
 def trim_face(posX,posY,posZ,sizeW,sizeH,video):
     
