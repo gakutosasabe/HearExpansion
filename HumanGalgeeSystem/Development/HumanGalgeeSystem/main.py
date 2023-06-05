@@ -63,7 +63,7 @@ def main():
         if not ret:
             break
         image = cv.flip(image, 1) #ミラー表示
-        image = copy.deepcopy(image)
+        overlay_image = copy.deepcopy(image)
 
         # 検出実施　###############################################################
         #image = cv.cvtColor(image, cv.COLOR_RGB)
@@ -74,6 +74,7 @@ def main():
             for detection in results.detections:
                 # 描画
                 image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
+                overlay_image = overlay_illust(image,posX,posY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
@@ -81,7 +82,7 @@ def main():
             break
 
         # 画面反映 #############################################################
-        cv.imshow('MediaPipe Face Detection Demo', image)
+        cv.imshow('MediaPipe Face Detection Demo', overlay_image)
     
     cap.release()
     cv.destroyAllWindows()
@@ -108,9 +109,18 @@ def culculate_face_pos_and_size(image,detection):
     
     return image, posX,posY,sizeW,sizeH
 
+# 重ね合わせ画像をresizeして重ねる
 def overlay_illust(image,posX,posY,sizeH):
-    laugh_man = cv.imread("../image/warai_flat.png")
-
+    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",1)
+    print(image.shape)
+    print(laugh_man.shape)
+    resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.1, fy=0.1)
+    resize_laugh_man_height = resize_laugh_man.shape[0]
+    print(resize_laugh_man_height)
+    resize_laugh_man_width = resize_laugh_man.shape[1]
+    print(resize_laugh_man_width)
+    print(posX,posY)
+    image[posY:posY+resize_laugh_man_height,posX:resize_laugh_man_width] = resize_laugh_man
     return image
 
 def trim_face(posX,posY,posZ,sizeW,sizeH,video):
