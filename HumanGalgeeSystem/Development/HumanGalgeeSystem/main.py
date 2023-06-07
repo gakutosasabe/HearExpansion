@@ -99,10 +99,10 @@ def main():
 def culculate_face_pos_and_size(image,detection):
     image_width, image_height = image.shape[1], image.shape[0]
     bbox = detection.location_data.relative_bounding_box
-    posX = int(bbox.xmin * image_width)
-    posY = int(bbox.ymin * image_height)
     sizeW = int(bbox.width * image_width)
     sizeH = int(bbox.height * image_height)
+    posX = int(bbox.xmin * image_width + (sizeW/2))
+    posY = int(bbox.ymin * image_height + (sizeH/2))
     
     cv.putText(image, "posX:" + str(posX) + " posY:" + str(posY) + " sizeW" + str(sizeW) + " sizeH" + str(sizeH),
                (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)
@@ -120,7 +120,8 @@ def overlay_illust(image,posX,posY,sizeH):
     resize_laugh_man_width = resize_laugh_man.shape[1]
     print(resize_laugh_man_width)
     print(posX,posY)
-    image[posY:posY+resize_laugh_man_height,posX:resize_laugh_man_width] = resize_laugh_man
+    # カメラ映像に笑い男画像を重ね合わせ
+    image[posY:posY+resize_laugh_man_height,posX:posX+resize_laugh_man_width] = resize_laugh_man
     return image
 
 def trim_face(posX,posY,posZ,sizeW,sizeH,video):
