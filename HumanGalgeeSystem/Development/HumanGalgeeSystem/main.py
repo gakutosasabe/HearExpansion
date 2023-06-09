@@ -111,12 +111,12 @@ def culculate_face_pos_and_size(image,detection):
 
 # 重ね合わせ画像をresizeして重ねる
 def overlay_illust(image,posX,posY,sizeH):
-    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",1)
-    resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.3, fy=0.3)
+    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
+    resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.4, fy=0.4)
     resize_laugh_man_height = resize_laugh_man.shape[0]
     resize_laugh_man_width = resize_laugh_man.shape[1]
     # カメラ映像に笑い男画像が入りきる場合は重ね合わせ
-    if ((posY + resize_laugh_man_height) < image.shape[0])&((posX + resize_laugh_man_width) < image.shape[1]):
+    if (posY -(resize_laugh_man_height/2) > 0) & (posY +(resize_laugh_man_height/2) < image.shape[0]) &  (posX - (resize_laugh_man_width/2) > 0) & (posX + (resize_laugh_man_width/2) < image.shape[1]):
         image[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = resize_laugh_man   
     return image
 
