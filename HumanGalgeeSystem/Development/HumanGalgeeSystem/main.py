@@ -110,18 +110,24 @@ def culculate_face_pos_and_size(image,detection):
     return image, posX,posY,sizeW,sizeH
 
 # 重ね合わせ画像をresizeして透明化して重ねる
-def overlay_illust(image,posX,posY,sizeH):
+def overlay_illust(bg,posX,posY,sizeH):
     laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
     resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.4, fy=0.4)
     resize_laugh_man_height = resize_laugh_man.shape[0]
     resize_laugh_man_width = resize_laugh_man.shape[1]
 
-    #重ね合わせ画像のアルファチャンネルだけ抜き出す
+    #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
     alpha = resize_laugh_man[:,:,3]
+    alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
+    alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
     
+    laugh_man_color = resize_laugh_man[:,:,:3] #色情報のみを抜き出す
+    bg_height,bg_width = bg.shape #背景画像の高さと幅を取得
+
     # カメラ映像に笑い男画像が入りきる場合は重ね合わせ
-    if (posY -(resize_laugh_man_height/2) > 0) & (posY +(resize_laugh_man_height/2) < image.shape[0]) &  (posX - (resize_laugh_man_width/2) > 0) & (posX + (resize_laugh_man_width/2) < image.shape[1]):
-        image[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = resize_laugh_man   
+    if (posY -(resize_laugh_man_height/2) > 0) & (posY +(resize_laugh_man_height/2) < bg.shape[0]) &  (posX - (resize_laugh_man_width/2) > 0) & (posX + (resize_laugh_man_width/2) < bg.shape[1]):
+        bg[posY]   
+        # image[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = resize_laugh_man   
     return image
 
 def trim_face(posX,posY,posZ,sizeW,sizeH,video):
