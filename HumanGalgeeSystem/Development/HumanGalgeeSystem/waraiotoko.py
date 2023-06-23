@@ -1,67 +1,3 @@
-# 美少女重ね表示部分の開発
-- dlibでやってるこの人のがいい感じに使えそう
-  - https://rikoubou.hatenablog.com/entry/2019/05/15/172615
-
-- 普通にface_detection.pyを走らせた結果
-![](20230530212134.png)
-
-- 透明色を設定する
-  - https://qiita.com/mo256man/items/f7524dd34718a01fb3df
-  - https://qiita.com/smatsumt/items/923aefb052f217f2f3c5
-    - 透過画像をアルファチャンネル付き画像というらしい
-
-
-# Mediapipe＋OpenCV＋Pythonで笑い男システム
-## 笑い男とは
-- 笑い男は攻殻機動隊というアニメ作品に出てくるスーパーハッカー
-  - https://dic.pixiv.net/a/%E7%AC%91%E3%81%84%E7%94%B7
-- 彼は自分を視認する人間の電脳（機械に置き換えた脳のこと）をリアルタイムでハッキングして，自分の顔を笑い男マークに変えてしまうのだ！
- ![](20230623103627.png)
-- 今回はMediapipe＋OpenCV＋Pythonで，Webカメラに映った人間の顔を笑い男マークに変えるというプログラムを作った
-## 作った
-### 設計
-- モジュール構造図は以下のような感じで，ノートPCのカメラ映像から顔の位置をMediapipeを用いて検出し，OpenCVを用いて笑い男イラストを貼り付けてディスプレイに映像を投影する
-
-![laugh](images/modulestructurewarai.drawio.svg)
-
-### 環境構築
-#### Mediapipeのインストール
-- 下記HPを参考に実行
-  - https://www.cs.k.tsukuba-tech.ac.jp/labo/koba/research/sigaci_ws_in_hi2022/install_mediapipe/
-
-- PyPIによるとMediapipeはpython3.11には対応していないらしいので注意（3.9,3.10は対応）
-![](20230512161245.png)
-
-- PC上に任意のバージョンのPythonをインストールできるpyenvを使ってpython 3.9.11をインストール
-  - https://qiita.com/noppe78/items/6de6a11116850a0a81a7
-
-- 下記コマンドでpythonのバージョンを3.9に切り替える
-```
-pyenv global 3.9.11
-```
-- 下記コマンドでmediapipeをインストール
-```
-pip install mediapipe
-```
-
-- 最後にmediapipeのサンプルを落としてきて実行
-```
-$ git clone https://github.com/Kazuhito00/mediapipe-python-sample
-$ cd mediapipe-python-sample
-$ python3 sample_hand.py
-```
-#### OpenCVのインストール
-- pythonのOpencvを下記コマンドをコマンドプロンプトから入力してインストールする
-```
-pip install opencv–python"
-```
-- Pythonの対話型実行環境を実行してOpenCVのライブラリcv2が利用できるかをチェック
-
-- 対話型実行環境が起動されると「>>>」とプロンプトが表示されるので"import cv2"と入力。エラーが出なければinstallできている。
-
-### 実装
-#### コード(Python)
-```python
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import copy
@@ -70,6 +6,8 @@ import argparse
 import cv2 as cv
 import numpy as np
 import mediapipe as mp
+
+from utils import CvFpsCalc
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -116,6 +54,8 @@ def main():
         min_detection_confidence=min_detection_confidence,
     )
 
+    # FPS計測モジュール ########################################################
+    cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     while True:
         # カメラキャプチャ　###############################################################
@@ -149,6 +89,10 @@ def main():
     
     
     
+    #faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,image)
+    #girlimage = conv_face2girl(faceimage)
+
+    
     return
 
 # 顔のx座標,y座標,幅，高さを抽出　###############################################################
@@ -165,14 +109,14 @@ def culculate_face_pos_and_size(image,detection):
     
     return image, posX,posY,sizeW,sizeH
 
-# 笑い男画像をresizeして透明化して重ねる
+# 重ね合わせ画像をresizeして透明化して重ねる
 def overlay_illust(bg,posX,posY,sizeH):
     laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
     resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.4, fy=0.4)
     resize_laugh_man_height = resize_laugh_man.shape[0]
     resize_laugh_man_width = resize_laugh_man.shape[1]
 
-    #笑い男画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
+    #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
     alpha = resize_laugh_man[:,:,3]
     alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
     alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
@@ -186,34 +130,17 @@ def overlay_illust(bg,posX,posY,sizeH):
 
     return bg
 
+def trim_face(posX,posY,posZ,sizeW,sizeH,video):
+    
+    return faceimage
+
+def conv_face2girl(faceimage):
+
+    return girlimage
+
+
 
 
 if __name__ == '__main__':
     main()
-```
 
-#### コードの説明(ChatGPT)
-- このコードの説明は以下
-
-```
-このコードは、カメラからの映像に対してリアルタイムで顔検出を行い、検出された顔に笑い男の画像を重ねるPythonスクリプトです。
-コードの主な手順は次のとおりです。
-1. 必要なライブラリをインポートします。
-2. コマンドライン引数を解析するためにargparseを使用するget_args()関数が定義されます。
-3. メインの処理を行うmain()関数が定義されます。
-4. カメラを初期化し、キャプチャの幅と高さを設定します。
-5. MediaPipeライブラリを使用して顔検出モデルをロードします。
-6. メインのループでカメラからフレームをキャプチャし、イメージを反転（ミラー表示）させます。
-7. MediaPipeを使用して顔検出を実行し、検出結果を取得します。
-8. 検出された顔があれば、各顔の位置とサイズを計算し、イメージに描画します。
-9. キーボード入力を監視し、ESCキーが押された場合にループを終了します。
-10. 最後にカメラを解放し、ウィンドウを閉じます。
-
-特に顔の位置とサイズの計算、および笑い男の画像の重ね合わせは、culculate_face_pos_and_size()関数とoverlay_illust()関数で行われます。
-```
-#### 詰まったところ
-- overlay_illust()関数の中で笑い男の画像の重ね合わせをしているのだが，
-
-### 参考にさせていただいた記事
-- dlibでやってる方
-  - https://rikoubou.hatenablog.com/entry/2019/05/15/172615
