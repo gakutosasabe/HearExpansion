@@ -7,8 +7,6 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
-from utils import CvFpsCalc
-
 def get_args():
     parser = argparse.ArgumentParser()
 
@@ -54,8 +52,6 @@ def main():
         min_detection_confidence=min_detection_confidence,
     )
 
-    # FPS計測モジュール ########################################################
-    cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     while True:
         # カメラキャプチャ　###############################################################
@@ -89,10 +85,6 @@ def main():
     
     
     
-    #faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,image)
-    #girlimage = conv_face2girl(faceimage)
-
-    
     return
 
 # 顔のx座標,y座標,幅，高さを抽出　###############################################################
@@ -109,14 +101,14 @@ def culculate_face_pos_and_size(image,detection):
     
     return image, posX,posY,sizeW,sizeH
 
-# 重ね合わせ画像をresizeして透明化して重ねる
+# 笑い男画像をresizeして透明化して重ねる
 def overlay_illust(bg,posX,posY,sizeH):
     laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
     resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.4, fy=0.4)
     resize_laugh_man_height = resize_laugh_man.shape[0]
     resize_laugh_man_width = resize_laugh_man.shape[1]
 
-    #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
+    #笑い男画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
     alpha = resize_laugh_man[:,:,3]
     alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
     alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
@@ -129,15 +121,6 @@ def overlay_illust(bg,posX,posY,sizeH):
         bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = (bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
 
     return bg
-
-def trim_face(posX,posY,posZ,sizeW,sizeH,video):
-    
-    return faceimage
-
-def conv_face2girl(faceimage):
-
-    return girlimage
-
 
 
 

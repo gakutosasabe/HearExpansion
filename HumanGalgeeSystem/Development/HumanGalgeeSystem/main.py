@@ -7,7 +7,7 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
-from utils import CvFpsCalc
+# from utils import CvFpsCalc
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -130,11 +130,11 @@ def overlay_illust(bg,posX,posY,sizeH):
 
     return bg
 
-def trim_face(posX,posY,posZ,sizeW,sizeH,video):
+# def trim_face(posX,posY,posZ,sizeW,sizeH,video):
     
     return faceimage
 
-def conv_face2girl(faceimage):
+# def conv_face2girl(faceimage):
 
     return girlimage
 
