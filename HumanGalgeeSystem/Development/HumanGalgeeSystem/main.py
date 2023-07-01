@@ -7,7 +7,7 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
-# from utils import CvFpsCalc
+from utils import CvFpsCalc
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -73,8 +73,8 @@ def main():
         if results.detections is not None:
             for detection in results.detections:
                 # 描画
-                image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
-                overlay_image = overlay_illust(image,posX,posY,sizeH)
+               image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
+               overlay_image = overlay_illust(image,posX,posY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
