@@ -1,5 +1,3 @@
-# ControlNetを使って,リアルタイム美少女画像を生成する
-
 # pythonの自作プログラムからStableDiffusionWebUIを使う
 - ローカルで実行しているStableDiffusionWebUIをWebAPIを通して自作のPythonプログラムから叩く方法を説明する
 
@@ -74,6 +72,12 @@ call webui.bat
 ## PCの7860番ポートを解放する
 - 下記URLを参考
     - https://zenn.dev/garyuten/articles/229c126405de37
+
+## 同一ネットワーク内のPCからアクセスする
+- 任意のブラウザから下記アドレスにアクセスするとStableDiffusionWebUIが操作できる
+```
+<StableDiffusionを立ち上げているPCのIPアドレス>:7860
+```
 # 参考
 - https://knowledge.sakura.ad.jp/35226/
 - https://zenn.dev/garyuten/articles/229c126405de37
