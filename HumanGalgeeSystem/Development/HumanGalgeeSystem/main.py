@@ -6,12 +6,13 @@ import argparse
 import cv2 as cv
 import numpy as np
 import mediapipe as mp
+import webuiapi
 
 from utils import CvFpsCalc
 
 def get_args():
     parser = argparse.ArgumentParser()
-
+    parser.add_argument("--prompt", type=str, default="beautiful boy,shinkai makoto")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
@@ -35,13 +36,15 @@ def main():
     cap_device = args.device
     cap_width = args.width
     cap_height = args.height
+    prompt = args.prompt
 
     model_selection = args.model_selection
     min_detection_confidence = args.min_detection_confidence
 
     use_brect = args.use_brect
 
-
+    # StableDiffusionのAPIのインスタンスを作成 ############################
+    api = webuiapi.WebUIApi()
     # カメラ準備　###############################################################
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
@@ -134,11 +137,11 @@ def overlay_illust(bg,posX,posY,sizeH):
     
     return faceimage
 
-# def conv_face2girl(faceimage):
-
+# StableDiffusionのimg2imgで画像を生成する
+def conv_face2girl(api,faceimage,prompt):
+    # 画像を生成する
+    girlimage = api.txt2img(prompt=prompt)
     return girlimage
-
-
 
 
 if __name__ == '__main__':
