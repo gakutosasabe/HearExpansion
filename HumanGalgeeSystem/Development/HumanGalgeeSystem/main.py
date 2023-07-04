@@ -75,9 +75,14 @@ def main():
         # 顔位置＆場所検出 ###############################################################
         if results.detections is not None:
             for detection in results.detections:
-                # 描画
-               image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
-               overlay_image = overlay_illust(image,posX,posY,sizeH)
+               # 検出された顔の場所を取得
+               image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
+               # 顔の切り抜き画像を取得
+               faceimage = trim_face(posX,posY,sizeW,sizeH,image)
+               # StableDiffusion変換後画像を取得
+               # sdimage = conv_face2girl(api,faceimage,prompt)
+               # StableDiffusion返還後画像を重ねる
+               overlay_image = overlay_illust(image,posCX,posCY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
@@ -86,6 +91,7 @@ def main():
 
         # 画面反映 #############################################################
         cv.imshow('MediaPipe Face Detection Demo', overlay_image)
+        cv.imshow('FaceTrim', faceimage)
     
     cap.release()
     cv.destroyAllWindows()
@@ -98,19 +104,21 @@ def main():
     
     return
 
-# 顔のx座標,y座標,幅，高さを抽出　###############################################################
+# 顔のx座標,y座標,x中心座標,y中心座標, 幅，高さを抽出　###############################################################
 def culculate_face_pos_and_size(image,detection):
     image_width, image_height = image.shape[1], image.shape[0]
     bbox = detection.location_data.relative_bounding_box
-    sizeW = int(bbox.width * image_width)
-    sizeH = int(bbox.height * image_height)
-    posX = int(bbox.xmin * image_width + (sizeW/2))
-    posY = int(bbox.ymin * image_height + (sizeH/2))
+    sizeW = int(bbox.width * image_width) # 幅
+    sizeH = int(bbox.height * image_height) # 高さ
+    posX = int(bbox.xmin * image_width) #X座標
+    posY = int(bbox.ymin * image_height) #Y座標
+    posCX = int(bbox.xmin * image_width + (sizeW/2)) #X中心座標
+    posCY = int(bbox.ymin * image_height + (sizeH/2)) #Y中心座標
     
     cv.putText(image, "posX:" + str(posX) + " posY:" + str(posY) + " sizeW" + str(sizeW) + " sizeH" + str(sizeH),
                (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)
     
-    return image, posX,posY,sizeW,sizeH
+    return image, posX, posY, posCX,posCY,sizeW,sizeH
 
 # 重ね合わせ画像をresizeして透明化して重ねる
 def overlay_illust(bg,posX,posY,sizeH):
@@ -133,8 +141,9 @@ def overlay_illust(bg,posX,posY,sizeH):
 
     return bg
 
-# def trim_face(posX,posY,posZ,sizeW,sizeH,video):
-    
+# 顔の部分を切り抜き
+def trim_face(posX,posY,sizeW,sizeH,image):
+    faceimage = image[posY:posY+sizeH,posX:posX+sizeW] 
     return faceimage
 
 # StableDiffusionのimg2imgで画像を生成する
