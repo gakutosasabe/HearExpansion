@@ -149,7 +149,12 @@ def trim_face(posX,posY,sizeW,sizeH,image):
 # StableDiffusionのimg2imgで画像を生成する
 def conv_face2girl(api,faceimage,prompt):
     # 画像を生成する
-    girlimage = api.txt2img(prompt=prompt)
+    girlimage = api.img2img(images = faceimage, prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.2)
+    
+    if girlimage is None:
+        laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
+        girlimage = laugh_man
+
     return girlimage
 
 
