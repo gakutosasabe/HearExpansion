@@ -7,12 +7,13 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 import webuiapi
+import time
 
 from utils import CvFpsCalc
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", type=str, default="beautiful boy,shinkai makoto")
+    parser.add_argument("--prompt", type=str, default="beautiful girl,shinkai makoto")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
@@ -96,10 +97,6 @@ def main():
     cap.release()
     cv.destroyAllWindows()
     
-    
-    
-    #faceimage = trim_face(posX,posY,posZ,sizeW,sizeH,image)
-    #girlimage = conv_face2girl(faceimage)
 
     
     return
