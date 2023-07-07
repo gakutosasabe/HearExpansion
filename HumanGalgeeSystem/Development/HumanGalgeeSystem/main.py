@@ -8,6 +8,7 @@ import numpy as np
 import mediapipe as mp
 import webuiapi
 import time
+from PIL import Image
 
 from utils import CvFpsCalc
 
@@ -45,7 +46,7 @@ def main():
     use_brect = args.use_brect
 
     # StableDiffusionのAPIのインスタンスを作成 ############################
-    api = webuiapi.WebUIApi()
+    api = webuiapi.WebUIApi(host='192.168.0.30', port=7860)
     # カメラ準備　###############################################################
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
@@ -92,7 +93,6 @@ def main():
 
         # 画面反映 #############################################################
         cv.imshow('MediaPipe Face Detection Demo', overlay_image)
-        cv.imshow('FaceTrim', faceimage)
     
     cap.release()
     cv.destroyAllWindows()
@@ -118,38 +118,41 @@ def culculate_face_pos_and_size(image,detection):
     return image, posX, posY, posCX,posCY,sizeW,sizeH
 
 # 重ね合わせ画像をresizeして透明化して重ねる
-def overlay_illust(bg,oi,posX,posY,sizeH):
-    resize_ol_image = cv.resize(oi, dsize=None, fx=0.4, fy=0.4)
+def overlay_illust(bg,ol,posX,posY,sizeH):
+    olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
+    resize_ol_image = cv.resize(olimage, dsize=None, fx=0.6, fy=0.6)
     resize_ol_image_height = resize_ol_image.shape[0]
     resize_ol_image_width = resize_ol_image.shape[1]
 
     #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
-    alpha = resize_ol_image[:,:,3]
-    alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
-    alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
+    #alpha = resize_ol_image[:,:,3]
+    #alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
+    #alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
     
-    laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
+    #laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
 
     # カメラ映像に重ね合わせ画像が入りきる場合は重ね合わせ
     if (posY -(resize_ol_image_height/2) > 0) & (posY +(resize_ol_image_height/2) < bg.shape[0]) &  (posX - (resize_ol_image_width/2) > 0) & (posX + (resize_ol_image_width/2) < bg.shape[1]):  
-        bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
-        bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
-
+        #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
+        #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
+        bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = resize_ol_image   
     return bg
 
 # 顔の部分を切り抜き
 def trim_face(posX,posY,sizeW,sizeH,image):
     faceimage = image[posY:posY+sizeH,posX:posX+sizeW] 
+    cv.imwrite("facetrim.png", faceimage)
     return faceimage
 
 # StableDiffusionのimg2imgで画像を生成する
 def conv_face2girl(api,faceimage,prompt):
     # 画像を生成する
-    girlimage = api.img2img(images = faceimage, prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.2)
-    
-    if girlimage is None:
-        laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
-        girlimage = laugh_man
+    faceimage = Image.open("facetrim.png")   
+    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.2)
+    girlimage.image.save("girlimage.png")
+    #if girlimage is None:
+    #    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
+    #    girlimage = laugh_man
 
     return girlimage
 
