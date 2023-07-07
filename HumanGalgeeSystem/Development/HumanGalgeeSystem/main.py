@@ -80,9 +80,9 @@ def main():
                # 顔の切り抜き画像を取得
                faceimage = trim_face(posX,posY,sizeW,sizeH,image)
                # StableDiffusion変換後画像を取得
-               # sdimage = conv_face2girl(api,faceimage,prompt)
+               sdimage = conv_face2girl(api,faceimage,prompt)
                # StableDiffusion返還後画像を重ねる
-               overlay_image = overlay_illust(image,posCX,posCY,sizeH)
+               overlay_image = overlay_illust(image,sdimage,posCX,posCY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
@@ -121,23 +121,22 @@ def culculate_face_pos_and_size(image,detection):
     return image, posX, posY, posCX,posCY,sizeW,sizeH
 
 # 重ね合わせ画像をresizeして透明化して重ねる
-def overlay_illust(bg,posX,posY,sizeH):
-    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
-    resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.4, fy=0.4)
-    resize_laugh_man_height = resize_laugh_man.shape[0]
-    resize_laugh_man_width = resize_laugh_man.shape[1]
+def overlay_illust(bg,oi,posX,posY,sizeH):
+    resize_ol_image = cv.resize(oi, dsize=None, fx=0.4, fy=0.4)
+    resize_ol_image_height = resize_ol_image.shape[0]
+    resize_ol_image_width = resize_ol_image.shape[1]
 
     #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
-    alpha = resize_laugh_man[:,:,3]
+    alpha = resize_ol_image[:,:,3]
     alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
     alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
     
-    laugh_man_color = resize_laugh_man[:,:,:3] #色情報のみを抜き出す
+    laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
 
-    # カメラ映像に笑い男画像が入りきる場合は重ね合わせ
-    if (posY -(resize_laugh_man_height/2) > 0) & (posY +(resize_laugh_man_height/2) < bg.shape[0]) &  (posX - (resize_laugh_man_width/2) > 0) & (posX + (resize_laugh_man_width/2) < bg.shape[1]):  
-        bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = (bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
-        bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = (bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
+    # カメラ映像に重ね合わせ画像が入りきる場合は重ね合わせ
+    if (posY -(resize_ol_image_height/2) > 0) & (posY +(resize_ol_image_height/2) < bg.shape[0]) &  (posX - (resize_ol_image_width/2) > 0) & (posX + (resize_ol_image_width/2) < bg.shape[1]):  
+        bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
+        bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
 
     return bg
 

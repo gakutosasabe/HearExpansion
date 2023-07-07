@@ -88,3 +88,6 @@ call webui.bat
 
 # LoRAが公開されているサイト
 - https://civitai.com/articles
+
+## webuiapiでimage2imageを使う
+- 
