@@ -3,7 +3,7 @@
 import copy
 import argparse
 import threading
-from queue import Queue
+import queue
 import cv2 as cv
 import numpy as np
 import mediapipe as mp
@@ -14,16 +14,19 @@ from PIL import Image
 from utils import CvFpsCalc
 
 # StableDiffusionのimg2imgで画像を生成する
-def conv_face2girl(api,faceimage,prompt):
+def conv_face2girl(api,prompt,command,queue):
     # 画像を生成する
-    faceimage = Image.open("facetrim.png")   
-    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.2)
-    girlimage.image.save("girlimage.png")
-    #if girlimage is None:
-    #    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
-    #    girlimage = laugh_man
+    state = "stop" # 状態を更新
+    queue.put(state)
+    faceimage = Image.open("facetrim.png")
+    
+    if command == "start":
+        state = "generating" # 状態を更新
+        queue.put(state) 
+        girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.2)
+        girlimage.image.save("girlimage.png")
+    
 
-    return girlimage
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -75,6 +78,9 @@ def main():
     # FPS計測モジュール ########################################################
     cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
+    # thread開始
+    thread = threading.Thread(target=)
+
     while True:
         # カメラキャプチャ　###############################################################
         ret, image = cap.read()
@@ -97,7 +103,7 @@ def main():
                # StableDiffusion変換後画像を取得
                sdimage = conv_face2girl(api,faceimage,prompt)
                # StableDiffusion返還後画像を重ねる
-               overlay_image = overlay_illust(image,sdimage,posCX,posCY,sizeH)
+               overlay_image = overlay_illust(image,posCX,posCY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
@@ -131,7 +137,7 @@ def culculate_face_pos_and_size(image,detection):
     return image, posX, posY, posCX,posCY,sizeW,sizeH
 
 # 重ね合わせ画像をresizeして透明化して重ねる
-def overlay_illust(bg,ol,posX,posY,sizeH):
+def overlay_illust(bg,posX,posY,sizeH):
     olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
     resize_ol_image = cv.resize(olimage, dsize=None, fx=0.6, fy=0.6)
     resize_ol_image_height = resize_ol_image.shape[0]
