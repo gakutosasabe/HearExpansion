@@ -100,6 +100,7 @@ def main():
                image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
                # 顔の切り抜き画像を取得
                faceimage = trim_face(posX,posY,sizeW,sizeH,image)
+               if 
                # StableDiffusion変換後画像を取得
                sdimage = conv_face2girl(api,faceimage,prompt)
                # StableDiffusion返還後画像を重ねる
