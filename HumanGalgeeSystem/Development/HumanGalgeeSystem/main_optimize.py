@@ -13,16 +13,16 @@ from PIL import Image
 
 from utils import CvFpsCalc
 
+running = False
+state = "stop"
+
 # StableDiffusionのimg2imgで画像を生成する
-def conv_face2girl(api,prompt,command,queue):
+def conv_face2girl(api,prompt):
     # 画像を生成する
     state = "stop" # 状態を更新
-    queue.put(state)
     faceimage = Image.open("facetrim.png")
-    
-    if command == "start":
+    if running == True :
         state = "generating" # 状態を更新
-        queue.put(state) 
         girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.2)
         girlimage.image.save("girlimage.png")
     
@@ -79,7 +79,7 @@ def main():
     cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     # thread開始
-    thread = threading.Thread(target=)
+    thread = threading.Thread(target=conv_face2girl)
 
     while True:
         # カメラキャプチャ　###############################################################
@@ -97,14 +97,19 @@ def main():
         if results.detections is not None:
             for detection in results.detections:
                # 検出された顔の場所を取得
-               image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
+                image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
                # 顔の切り抜き画像を取得
-               faceimage = trim_face(posX,posY,sizeW,sizeH,image)
-               if 
+                faceimage = trim_face(posX,posY,sizeW,sizeH,image)
+                
+                if state == "stop":
+                   running = True
+                else:
+                   running = False
                # StableDiffusion変換後画像を取得
-               sdimage = conv_face2girl(api,faceimage,prompt)
+                conv_face2girl(api,faceimage,prompt,queue)
+               
                # StableDiffusion返還後画像を重ねる
-               overlay_image = overlay_illust(image,posCX,posCY,sizeH)
+                overlay_image = overlay_illust(image,posCX,posCY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
