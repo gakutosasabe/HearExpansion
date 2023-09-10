@@ -12,3 +12,8 @@
       - 状態管理するにはQueueを使えばいいらしい
         - https://note.com/amr1/n/ncd4d2bbb376c
     - 一応最適化は完了したので，新ゲーミングPC側の環境を整える
+
+
+# Stable Diffusionを新PCで環境構築
+- webuiを立ち上げたURL＋/docsでAPIのリストが出る
+- --apiだけじゃなく --listenをつけなきゃいけなかったわ
