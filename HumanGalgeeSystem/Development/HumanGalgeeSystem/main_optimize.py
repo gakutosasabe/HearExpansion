@@ -62,7 +62,7 @@ def main():
     use_brect = args.use_brect
 
     # StableDiffusionのAPIのインスタンスを作成 ############################
-    api = webuiapi.WebUIApi(host='192.168.1.71', port=7860)
+    api = webuiapi.WebUIApi(host='192.168.0.10', port=7860)
     # カメラ準備　###############################################################
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
