@@ -72,8 +72,9 @@ def main():
         if results.detections is not None:
             for detection in results.detections:
                 # 描画
-                debug_image = draw_detection(debug_image, detection)
-
+                image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
+                overlay_image = overlay_illust(image,posX,posY,sizeH)
+    
         cv.putText(debug_image, "FPS:" + str(display_fps), (10, 30),
                    cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA)
 
@@ -83,10 +84,47 @@ def main():
             break
 
         # 画面反映 #############################################################
-        cv.imshow('MediaPipe Face Detection Demo', debug_image)
+        cv.imshow('MediaPipe Face Detection Demo', overlay_image)
 
     cap.release()
     cv.destroyAllWindows()
+
+
+
+# 顔のx座標,y座標,幅，高さを抽出　###############################################################
+def culculate_face_pos_and_size(image,detection):
+    image_width, image_height = image.shape[1], image.shape[0]
+    bbox = detection.location_data.relative_bounding_box
+    sizeW = int(bbox.width * image_width)
+    sizeH = int(bbox.height * image_height)
+    posX = int(bbox.xmin * image_width + (sizeW/2))
+    posY = int(bbox.ymin * image_height + (sizeH/2))
+    
+    cv.putText(image, "posX:" + str(posX) + " posY:" + str(posY) + " sizeW" + str(sizeW) + " sizeH" + str(sizeH),
+               (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)
+    
+    return image, posX,posY,sizeW,sizeH
+
+# 笑い男画像をresizeして透明化して重ねる
+def overlay_illust(bg,posX,posY,sizeH):
+    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
+    resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.4, fy=0.4)
+    resize_laugh_man_height = resize_laugh_man.shape[0]
+    resize_laugh_man_width = resize_laugh_man.shape[1]
+
+    #笑い男画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
+    alpha = resize_laugh_man[:,:,3]
+    alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
+    alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
+    
+    laugh_man_color = resize_laugh_man[:,:,:3] #色情報のみを抜き出す
+
+    # カメラ映像に笑い男画像が入りきる場合は重ね合わせ
+    if (posY -(resize_laugh_man_height/2) > 0) & (posY +(resize_laugh_man_height/2) < bg.shape[0]) &  (posX - (resize_laugh_man_width/2) > 0) & (posX + (resize_laugh_man_width/2) < bg.shape[1]):  
+        bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = (bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
+        bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] = (bg[int(posY-(resize_laugh_man_height/2)):int(posY+(resize_laugh_man_height/2)),int(posX-(resize_laugh_man_width/2)):int(posX+(resize_laugh_man_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
+
+    return bg
 
 
 def draw_detection(image, detection):
