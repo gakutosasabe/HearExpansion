@@ -30,3 +30,9 @@ sudo raspi-config
   - 特に設定していなければユーザー名は"pi"のはず
 - ログインできた
 ![](20230921085239.png)
+
+# Gitのリモートレポジトリから落としてくる
+- https://magazine.techacademy.jp/magazine/10274
+
+# GitをTokenでPushする
+- https://rfs.jp/server/git/github/personal_access_tokens.html
