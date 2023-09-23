@@ -20,7 +20,7 @@ from utils import CvFpsCalc
 def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
-    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.6)
+    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
     girlimage.image.save("girlimage.png")
         
 
@@ -143,9 +143,11 @@ def culculate_face_pos_and_size(image,detection):
 def overlay_illust(bg,posX,posY,sizeH):
     try :
         olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
-        resize_ol_image = cv.resize(olimage, dsize=None, fx=sizeH * 0.004, fy=sizeH * 0.004)
+        resize_ol_image = cv.resize(olimage, dsize=None, fx=sizeH * 0.0035, fy=sizeH * 0.0035)
         resize_ol_image_height = resize_ol_image.shape[0]
         resize_ol_image_width = resize_ol_image.shape[1]
+        
+        posY = posY -50 #高さ方向のオフセット
 
         #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
         #alpha = resize_ol_image[:,:,3]
@@ -164,7 +166,7 @@ def overlay_illust(bg,posX,posY,sizeH):
         print(ex)
         return bg
 
-# 顔の部分を切り抜き
+# 顔の部分を切り抜き()
 def trim_face(posX,posY,sizeW,sizeH,image):
     try :
         faceimage = image[posY-100:posY+sizeH,posX-50:posX+sizeW+50] 
