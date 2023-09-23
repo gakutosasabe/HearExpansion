@@ -53,7 +53,6 @@ def main():
     cap_height = args.height
     prompt = args.prompt
 
-    model_selection = args.model_selection
     min_detection_confidence = args.min_detection_confidence
 
     use_brect = args.use_brect
@@ -68,7 +67,6 @@ def main():
     # モデルロード　###############################################################
     mp_face_detection = mp.solutions.face_detection
     face_detection = mp_face_detection.FaceDetection(
-        model_selection=model_selection,
         min_detection_confidence=min_detection_confidence,
     )
 
@@ -90,15 +88,15 @@ def main():
 
         # 検出実施　###############################################################
         #image = cv.cvtColor(image, cv.COLOR_RGB)
-        results = face_detection.process(image)
+        results = face_detection.process(overlay_image)
 
         # 顔位置＆場所検出 ###############################################################
         if results.detections is not None:
             for detection in results.detections:
                # 検出された顔の場所を取得
-                image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
+                image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(overlay_image, detection)
                # 顔の切り抜き画像を取得
-                faceimage = trim_face(posX,posY,sizeW,sizeH,image)
+                faceimage = trim_face(posX,posY,sizeW,sizeH,overlay_image)
                 # thread開始
                 if thread is None or not thread.is_alive() : # ThreadがNoneもしくはThreadが動いてなかったら
                     faceimage = Image.open("facetrim.png")
@@ -164,17 +162,17 @@ def overlay_illust(bg,posX,posY,sizeH):
             bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = resize_ol_image   
         return bg
     except Exception as ex :
-        #print(ex)
+        print(ex)
         return bg
 
 # 顔の部分を切り抜き()
 def trim_face(posX,posY,sizeW,sizeH,image):
     try :
-        faceimage = image[posY-100:posY+sizeH,posX-50:posX+sizeW+50] 
+        faceimage = image[posY:posY+sizeH,posX:posX+sizeW] 
         cv.imwrite("facetrim.png", faceimage)
         return faceimage
     except Exception as ex :
-        #print(ex)
+        print(ex)
         return image
 
 
