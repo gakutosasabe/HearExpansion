@@ -74,7 +74,7 @@ def main():
             for detection in results.detections:
                 # 描画
                 image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
-                overlay_image = overlay_illust(image,posX,posY,sizeH)
+                overlay_image = overlay_illust(overlay_image,posX,posY,sizeH)
     
         cv.putText(overlay_image, "FPS:" + str(display_fps), (10, 30),
                    cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA)

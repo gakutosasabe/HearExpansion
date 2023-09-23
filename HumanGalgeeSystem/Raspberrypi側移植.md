@@ -34,5 +34,9 @@ sudo raspi-config
 # Gitのリモートレポジトリから落としてくる
 - https://magazine.techacademy.jp/magazine/10274
 
-# GitをTokenでPushする
+## GitをTokenでPushする
 - https://rfs.jp/server/git/github/personal_access_tokens.html
+
+## エラー対処
+- https://qiita.com/kzri4/items/524f24504100eed78bec
+
