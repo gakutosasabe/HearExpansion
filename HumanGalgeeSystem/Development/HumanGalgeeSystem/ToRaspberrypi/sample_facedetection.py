@@ -62,7 +62,7 @@ def main():
         if not ret:
             break
         image = cv.flip(image, 1)  # ミラー表示
-        debug_image = copy.deepcopy(image)
+        overlay_image = copy.deepcopy(image)
 
         # 検出実施 #############################################################
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
@@ -75,7 +75,7 @@ def main():
                 image,posX,posY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
                 overlay_image = overlay_illust(image,posX,posY,sizeH)
     
-        cv.putText(debug_image, "FPS:" + str(display_fps), (10, 30),
+        cv.putText(overlay_image, "FPS:" + str(display_fps), (10, 30),
                    cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA)
 
         # キー処理(ESC：終了) #################################################
@@ -107,7 +107,7 @@ def culculate_face_pos_and_size(image,detection):
 
 # 笑い男画像をresizeして透明化して重ねる
 def overlay_illust(bg,posX,posY,sizeH):
-    laugh_man = cv.imread("C:\\Users\\user\\Desktop\\HearExpansion\\HumanGalgeeSystem\\Development\\HumanGalgeeSystem\\warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
+    laugh_man = cv.imread("/home/pi/hearexpansion/HumanGalgeeSystem/Development/HumanGalgeeSystem/ToRaspberrypi/warai_flat.png",cv.IMREAD_UNCHANGED)  # アルファチャンネル込みで読み込む)
     resize_laugh_man = cv.resize(laugh_man, dsize=None, fx=0.4, fy=0.4)
     resize_laugh_man_height = resize_laugh_man.shape[0]
     resize_laugh_man_width = resize_laugh_man.shape[1]
