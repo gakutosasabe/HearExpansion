@@ -21,8 +21,8 @@ def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
     girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
-    cv.imwrite("girlimage.png", girlimage)
-    #girlimage.image.save("girlimage.png")
+    #cv.imwrite("girlimage.png", girlimage)
+    girlimage.image.save("girlimage.png")
         
 
 
@@ -143,11 +143,11 @@ def culculate_face_pos_and_size(image,detection):
 def overlay_illust(bg,posX,posY,sizeH):
     try :
         olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
-        resize_ol_image = cv.resize(olimage, dsize=None, fx=sizeH * 0.0035, fy=sizeH * 0.0035)
+        resize_ol_image = cv.resize(olimage, dsize=None, fx=sizeH * 0.0023, fy=sizeH * 0.0023)
         resize_ol_image_height = resize_ol_image.shape[0]
         resize_ol_image_width = resize_ol_image.shape[1]
         
-        posY = posY -50 #高さ方向のオフセット
+        posY = posY  #高さ方向のオフセット
 
         #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
         #alpha = resize_ol_image[:,:,3]
