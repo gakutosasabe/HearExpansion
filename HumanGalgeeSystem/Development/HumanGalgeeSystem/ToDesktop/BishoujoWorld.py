@@ -20,14 +20,14 @@ from utils import CvFpsCalc
 def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
-    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
+    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.4)
     girlimage.image.save("girlimage.png")
         
 
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", type=str, default="Photographic portrait of beautiful women wearing white lace dress, glowing skin, Sony α7, 35mm Lens, f1.8, film grain, golden hour, soft lighting, by Daniel F Gerhartz")
+    parser.add_argument("--prompt", type=str, default="super fine illustration, best quality, anime screencap, cowboy shot, 1 girl, brown hair, basketball court, team uniform, realistic, beautiful, anime, anime faces")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
