@@ -21,7 +21,8 @@ def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
     girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
-    girlimage.image.save("girlimage.png")
+    cv.imwrite("girlimage.png", girlimage)
+    #girlimage.image.save("girlimage.png")
         
 
 
