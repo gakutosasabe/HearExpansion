@@ -13,24 +13,20 @@ from PIL import Image
 
 from utils import CvFpsCalc
 
-running = False
-state = "stop"
+
 
 # StableDiffusionのimg2imgで画像を生成する
-def conv_face2girl(api,prompt):
+def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
-    state = "stop" # 状態を更新
-    faceimage = Image.open("facetrim.png")
-    if running == True :
-        state = "generating" # 状態を更新
-        girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.2)
-        girlimage.image.save("girlimage.png")
-    
+    # faceimage = Image.open("facetrim.png")
+    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.8)
+    girlimage.image.save("girlimage.png")
+        
 
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", type=str, default="beautiful girl,shinkai makoto")
+    parser.add_argument("--prompt", type=str, default="cat,face")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
@@ -62,7 +58,7 @@ def main():
     use_brect = args.use_brect
 
     # StableDiffusionのAPIのインスタンスを作成 ############################
-    api = webuiapi.WebUIApi(host='192.168.0.10', port=7860)
+    api = webuiapi.WebUIApi(host='localhost', port=7860)
     # カメラ準備　###############################################################
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
@@ -78,8 +74,8 @@ def main():
     # FPS計測モジュール ########################################################
     cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
-    # thread開始
-    thread = threading.Thread(target=conv_face2girl)
+    thread = None
+
 
     while True:
         # カメラキャプチャ　###############################################################
@@ -88,6 +84,7 @@ def main():
             break
         image = cv.flip(image, 1) #ミラー表示
         overlay_image = copy.deepcopy(image)
+
 
         # 検出実施　###############################################################
         #image = cv.cvtColor(image, cv.COLOR_RGB)
@@ -100,13 +97,12 @@ def main():
                 image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
                # 顔の切り抜き画像を取得
                 faceimage = trim_face(posX,posY,sizeW,sizeH,image)
-                
-                if state == "stop":
-                   running = True
-                else:
-                   running = False
-               # StableDiffusion変換後画像を取得
-                conv_face2girl(api,faceimage,prompt,queue)
+                  # thread開始
+                if thread is None or not thread.is_alive() : 
+                    faceimage = Image.open("facetrim.png")
+                    print("thread start")
+                    thread = threading.Thread(target=conv_face2girl,args = (api,prompt,faceimage))
+                    thread.start()
                
                # StableDiffusion返還後画像を重ねる
                 overlay_image = overlay_illust(image,posCX,posCY,sizeH)
@@ -144,24 +140,28 @@ def culculate_face_pos_and_size(image,detection):
 
 # 重ね合わせ画像をresizeして透明化して重ねる
 def overlay_illust(bg,posX,posY,sizeH):
-    olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
-    resize_ol_image = cv.resize(olimage, dsize=None, fx=0.6, fy=0.6)
-    resize_ol_image_height = resize_ol_image.shape[0]
-    resize_ol_image_width = resize_ol_image.shape[1]
+    try :
+        olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
+        resize_ol_image = cv.resize(olimage, dsize=None, fx=0.6, fy=0.6)
+        resize_ol_image_height = resize_ol_image.shape[0]
+        resize_ol_image_width = resize_ol_image.shape[1]
 
-    #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
-    #alpha = resize_ol_image[:,:,3]
-    #alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
-    #alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
-    
-    #laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
+        #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
+        #alpha = resize_ol_image[:,:,3]
+        #alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
+        #alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
+        
+        #laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
 
-    # カメラ映像に重ね合わせ画像が入りきる場合は重ね合わせ
-    if (posY -(resize_ol_image_height/2) > 0) & (posY +(resize_ol_image_height/2) < bg.shape[0]) &  (posX - (resize_ol_image_width/2) > 0) & (posX + (resize_ol_image_width/2) < bg.shape[1]):  
-        #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
-        #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
-        bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = resize_ol_image   
-    return bg
+        # カメラ映像に重ね合わせ画像が入りきる場合は重ね合わせ
+        if (posY -(resize_ol_image_height/2) > 0) & (posY +(resize_ol_image_height/2) < bg.shape[0]) &  (posX - (resize_ol_image_width/2) > 0) & (posX + (resize_ol_image_width/2) < bg.shape[1]):  
+            #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
+            #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] + (laugh_man_color * alpha)).astype('uint8') #合成
+            bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = resize_ol_image   
+        return bg
+    except Exception as ex :
+        print(ex)
+        return bg
 
 # 顔の部分を切り抜き
 def trim_face(posX,posY,sizeW,sizeH,image):
