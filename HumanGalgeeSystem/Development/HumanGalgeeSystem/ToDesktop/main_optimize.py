@@ -15,18 +15,19 @@ from utils import CvFpsCalc
 
 
 
+
 # StableDiffusionのimg2imgで画像を生成する
 def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
-    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.8)
+    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.6)
     girlimage.image.save("girlimage.png")
         
 
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", type=str, default="cat,face")
+    parser.add_argument("--prompt", type=str, default="Photographic portrait of beautiful women wearing white lace dress, glowing skin, Sony α7, 35mm Lens, f1.8, film grain, golden hour, soft lighting, by Daniel F Gerhartz")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
@@ -97,8 +98,8 @@ def main():
                 image,posX, posY,posCX,posCY,sizeW,sizeH = culculate_face_pos_and_size(image, detection)
                # 顔の切り抜き画像を取得
                 faceimage = trim_face(posX,posY,sizeW,sizeH,image)
-                  # thread開始
-                if thread is None or not thread.is_alive() : 
+                # thread開始
+                if thread is None or not thread.is_alive() : # ThreadがNoneもしくはThreadが動いてなかったら
                     faceimage = Image.open("facetrim.png")
                     print("thread start")
                     thread = threading.Thread(target=conv_face2girl,args = (api,prompt,faceimage))
@@ -142,7 +143,7 @@ def culculate_face_pos_and_size(image,detection):
 def overlay_illust(bg,posX,posY,sizeH):
     try :
         olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
-        resize_ol_image = cv.resize(olimage, dsize=None, fx=0.6, fy=0.6)
+        resize_ol_image = cv.resize(olimage, dsize=None, fx=sizeH * 0.004, fy=sizeH * 0.004)
         resize_ol_image_height = resize_ol_image.shape[0]
         resize_ol_image_width = resize_ol_image.shape[1]
 
@@ -165,9 +166,13 @@ def overlay_illust(bg,posX,posY,sizeH):
 
 # 顔の部分を切り抜き
 def trim_face(posX,posY,sizeW,sizeH,image):
-    faceimage = image[posY:posY+sizeH,posX:posX+sizeW] 
-    cv.imwrite("facetrim.png", faceimage)
-    return faceimage
+    try :
+        faceimage = image[posY-100:posY+sizeH,posX-50:posX+sizeW+50] 
+        cv.imwrite("facetrim.png", faceimage)
+        return faceimage
+    except Exception as ex :
+        print(ex)
+        return image
 
 
 
