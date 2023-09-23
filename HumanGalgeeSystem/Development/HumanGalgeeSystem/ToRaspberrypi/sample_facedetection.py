@@ -61,8 +61,9 @@ def main():
         ret, image = cap.read()
         if not ret:
             break
-        image = cv.flip(image, 1)  # ミラー表示
+        # image = cv.flip(image, 1)  # ミラー表示
         overlay_image = copy.deepcopy(image)
+        overlay_image = cv.rotate(overlay_image, cv.ROTATE_180)
 
         # 検出実施 #############################################################
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
