@@ -163,7 +163,7 @@ def overlay_illust(bg,posX,posY,sizeH):
             bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = resize_ol_image   
         return bg
     except Exception as ex :
-        print(ex)
+        #print(ex)
         return bg
 
 # 顔の部分を切り抜き()
@@ -173,7 +173,7 @@ def trim_face(posX,posY,sizeW,sizeH,image):
         cv.imwrite("facetrim.png", faceimage)
         return faceimage
     except Exception as ex :
-        print(ex)
+        #print(ex)
         return image
 
 
