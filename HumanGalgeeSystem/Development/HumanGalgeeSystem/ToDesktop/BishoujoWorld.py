@@ -76,6 +76,7 @@ def main():
     cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     thread = None
+    posX,posY,posCX,posCY,sizeW,sizeH = None
 
 
     while True:
@@ -104,9 +105,9 @@ def main():
                     print("thread start")
                     thread = threading.Thread(target=conv_face2girl,args = (api,prompt,faceimage))
                     thread.start()
-               
-               # StableDiffusion返還後画像を重ねる
-                overlay_image = overlay_illust(image,posCX,posCY,sizeH)
+        
+        # StableDiffusion返還後画像を重ねる
+        overlay_image = overlay_illust(image,posCX,posCY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
