@@ -10,17 +10,30 @@ import mediapipe as mp
 import webuiapi
 import time
 from PIL import Image
+import os
 
 from utils import CvFpsCalc
 
 
 
 
-# StableDiffusionのimg2imgで画像を生成する
+# StableDiffusionのimg2imgで画像を生成すし、タイムスタンプ付きでgirlimagesフォルダに保存する
 def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
     girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.4)
+    # タイムスタンプを取得
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+    # 保存用のファイル名を作成
+    file_name = f"girlimage_{timestamp}.jpg"
+    # 保存先フォルダがない場合は作成
+    if not os.path.exists("girlimages"):
+        os.mkdir("girlimages")
+
+    # 画像をgirlimagesに保存
+    girlimage.image.save(os.path.join("girlimages",file_name))
+    print(f"{file_name} をgirlimagesに保存しました。")
+
     girlimage.image.save("girlimage.png")
         
 
@@ -77,6 +90,9 @@ def main():
 
     thread = None
     posX,posY,posCX,posCY,sizeW,sizeH = 0,0,0,0,0,0
+
+    # フォルダ作成
+    create_girlimages_folder()
 
 
     while True:
@@ -181,6 +197,18 @@ def trim_face(posX,posY,sizeW,sizeH,image):
         return image
 
 
+def create_girlimages_folder():
+    # フォルダが存在しない場合にのみフォルダを作成
+    folder_name = "girlimages"
+    if not os.path.exists(folder_name):
+        try:
+            os.mkdir(folder_name)
+            print(f'{folder_name} フォルダが作成されました。')
+        except OSError as e:
+            print(f'フォルダ {folder_name} の作成中にエラーが発生しました: {e}')
+    else:
+        print(f'{folder_name} フォルダは既に存在します。スキップします。')
+        print
 
 if __name__ == '__main__':
     main()
