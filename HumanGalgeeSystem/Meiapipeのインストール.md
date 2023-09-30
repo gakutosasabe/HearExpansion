@@ -35,7 +35,7 @@ $ python3 sample_hand.py
   - https://www.cs.k.tsukuba-tech.ac.jp/labo/koba/research/sigaci_ws_in_hi2022/install_mediapipe/
 
 - PyPIによるとpython3.11には対応していないので注意,3.9,3.10は対応
-![](20230512161245.png)
+![](images/20230512161245.png)
 
 - 下記URLを参考にpyenvとpython 3.9.11をインストール
   - https://qiita.com/noppe78/items/6de6a11116850a0a81a7

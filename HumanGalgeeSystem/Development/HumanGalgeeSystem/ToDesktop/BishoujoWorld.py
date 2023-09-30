@@ -143,7 +143,7 @@ def culculate_face_pos_and_size(image,detection):
     
     return image, posX, posY, posCX,posCY,sizeW,sizeH
 
-# 重ね合わせ画像をresizeして透明化して重ねる
+# 重ね合わせ画像をresizeして重ねる
 def overlay_illust(bg,posX,posY,sizeH):
     try :
         olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
@@ -152,13 +152,6 @@ def overlay_illust(bg,posX,posY,sizeH):
         resize_ol_image_width = resize_ol_image.shape[1]
         
         posY = posY -50 #高さ方向のオフセット
-
-        #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
-        #alpha = resize_ol_image[:,:,3]
-        #alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
-        #alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
-        
-        #laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
 
         # カメラ映像に重ね合わせ画像が入りきる場合は重ね合わせ
         if (posY -(resize_ol_image_height/2) > 0) & (posY +(resize_ol_image_height/2) < bg.shape[0]) &  (posX - (resize_ol_image_width/2) > 0) & (posX + (resize_ol_image_width/2) < bg.shape[1]):  
