@@ -28,7 +28,9 @@ $ git clone https://github.com/Kazuhito00/mediapipe-python-sample -b v0.8.4
 $ cd mediapipe-python-sample
 $ python3 sample_hand.py
 ```
-
+### ラズパイのGPUに割り当てるメモリを増やす
+- ラズパイ４だと最大896MBまで割り当てられる（だいぶ違う）
+- https://rikoubou.hatenablog.com/entry/2020/06/15/151257#:~:text=%E5%B7%A6%E4%B8%8A%E3%81%AB%E3%81%82%E3%82%8B%E3%80%8C%E3%83%A9%E3%82%BA%E3%83%99%E3%83%AA%E3%83%BC%E3%83%91%E3%82%A4,%E5%88%86%E3%81%A0%E3%81%91%E5%89%B2%E3%82%8A%E5%BD%93%E3%81%A6%E3%82%89%E3%82%8C%E3%81%BE%E3%81%99%E3%80%82
 ## Mediapipeのインストール(Windows編)
 - デバッグしやすいようにWindows側もMediapipeをインストールしておく
 - 下記HPを参考に実行
