@@ -213,3 +213,9 @@ def create_girlimages_folder():
 if __name__ == '__main__':
     main()
 
+# girlimagesフォルダの中を捜査して，読み込める画像を渡す，
+def image_reading():
+    return
+# girlimages フォルダの中を10件の写真になるように保つ
+def organaize_folder():
+    return
