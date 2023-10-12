@@ -149,13 +149,6 @@ def overlay_illust(bg,posX,posY,sizeH):
         
         posY = posY  #高さ方向のオフセット
 
-        #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
-        #alpha = resize_ol_image[:,:,3]
-        #alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
-        #alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
-        
-        #laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
-
         # カメラ映像に重ね合わせ画像が入りきる場合は重ね合わせ
         if (posY -(resize_ol_image_height/2) > 0) & (posY +(resize_ol_image_height/2) < bg.shape[0]) &  (posX - (resize_ol_image_width/2) > 0) & (posX + (resize_ol_image_width/2) < bg.shape[1]):  
             #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)

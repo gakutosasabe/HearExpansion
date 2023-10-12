@@ -20,14 +20,14 @@ from utils import CvFpsCalc
 def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
-    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
+    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.4)
     girlimage.image.save("girlimage.png")
         
 
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", type=str, default="Photographic portrait of beautiful women wearing white lace dress, glowing skin, Sony α7, 35mm Lens, f1.8, film grain, golden hour, soft lighting, by Daniel F Gerhartz")
+    parser.add_argument("--prompt", type=str, default="super fine illustration, best quality, anime screencap, cowboy shot, 1 girl, brown hair, basketball court, team uniform, realistic, beautiful, anime, anime faces")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--width", help='cap width', type=int, default=960)
     parser.add_argument("--height", help='cap height', type=int, default=540)
@@ -76,6 +76,7 @@ def main():
     cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     thread = None
+    posX,posY,posCX,posCY,sizeW,sizeH = 0,0,0,0,0,0
 
 
     while True:
@@ -104,9 +105,12 @@ def main():
                     print("thread start")
                     thread = threading.Thread(target=conv_face2girl,args = (api,prompt,faceimage))
                     thread.start()
-               
-               # StableDiffusion返還後画像を重ねる
-                overlay_image = overlay_illust(image,posCX,posCY,sizeH)
+        
+
+        # StableDiffusion返還後画像を重ねる
+        overlay_image = overlay_illust(image,posCX,posCY,sizeH)
+        
+    
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
@@ -139,7 +143,7 @@ def culculate_face_pos_and_size(image,detection):
     
     return image, posX, posY, posCX,posCY,sizeW,sizeH
 
-# 重ね合わせ画像をresizeして透明化して重ねる
+# 重ね合わせ画像をresizeして重ねる
 def overlay_illust(bg,posX,posY,sizeH):
     try :
         olimage = cv.imread("girlimage.png",cv.IMREAD_UNCHANGED) 
@@ -149,13 +153,6 @@ def overlay_illust(bg,posX,posY,sizeH):
         
         posY = posY -50 #高さ方向のオフセット
 
-        #重ね合わせ画像のアルファチャンネルだけ抜き出す(0~255の値が入っている)
-        #alpha = resize_ol_image[:,:,3]
-        #alpha = cv.cvtColor(alpha, cv.COLOR_GRAY2BGR) # grayをBGRに変換(各ピクセルのα値を各チャンネル(B,G,Rにコピー))
-        #alpha = alpha /255.0 #0.0 ~ 1.0の間に変換
-        
-        #laugh_man_color = resize_ol_image[:,:,:3] #色情報のみを抜き出す
-
         # カメラ映像に重ね合わせ画像が入りきる場合は重ね合わせ
         if (posY -(resize_ol_image_height/2) > 0) & (posY +(resize_ol_image_height/2) < bg.shape[0]) &  (posX - (resize_ol_image_width/2) > 0) & (posX + (resize_ol_image_width/2) < bg.shape[1]):  
             #bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = (bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] * (1.0 - alpha)).astype('uint8') #透明度がMaxの箇所はBGR値を0に(黒に)
@@ -163,7 +160,7 @@ def overlay_illust(bg,posX,posY,sizeH):
             bg[int(posY-(resize_ol_image_height/2)):int(posY+(resize_ol_image_height/2)),int(posX-(resize_ol_image_width/2)):int(posX+(resize_ol_image_width/2))] = resize_ol_image   
         return bg
     except Exception as ex :
-        #print(ex)
+        print(ex)
         return bg
 
 # 顔の部分を切り抜き()

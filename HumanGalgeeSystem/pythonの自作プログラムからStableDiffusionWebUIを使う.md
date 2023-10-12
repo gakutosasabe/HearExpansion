@@ -13,9 +13,9 @@ cd stable-diffusion-webui
 .\webui-user.bat
 ```
 - コマンドプロンプトにしたのような表記が出たら問題なくWebUIの立ち上げが完了
-![](20230702120642.png)
+![](images/20230702120642.png)
 - ブラウザからhttp://127.0.0.1:7860にアクセス
-![](20230702120801.png)
+![](images/20230702120801.png)
 
 ## WebAPI機能を有効化する
 - WebAPI機能を有効にするとPython等のプログラムからStableDiffusionを実行できる
