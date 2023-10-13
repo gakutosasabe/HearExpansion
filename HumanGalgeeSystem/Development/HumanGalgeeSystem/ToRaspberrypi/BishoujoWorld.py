@@ -23,6 +23,9 @@ def conv_face2girl(api,prompt,faceimage):
     girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
     #cv.imwrite("girlimage.png", girlimage)
     girlimage.image.save("girlimage.png")
+
+    # 一定時間待つ
+    time.sleep(3)
         
 
 
@@ -105,13 +108,28 @@ def main():
                     thread = threading.Thread(target=conv_face2girl,args = (api,prompt,faceimage))
                     thread.start()
                
-               # StableDiffusion返還後画像を重ねる
-                overlay_image = overlay_illust(image,posCX,posCY,sizeH)
+            
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
         if key == 27:  # ESC
             break
+        elif key == ord('1'): # 美少女モード
+            prompt = "a young girl with detailed reflecting eyes by professional digital painting in granblue fantasy style, beautiful pretty cute face, full body shot of loli anime girl, a small smile, short blonde hair, big ribbon on the head, wearing fantasy clothes, front lighting, 8k resolution, featured on pixiv"
+            mode = "All Human Girls Mode"
+        elif key == ord('2'): # 美少年モード
+            prompt = "super fine illustration, best quality, anime screencap, cowboy shot, 1 girl, brown hair, basketball court, team uniform, realistic, beautiful, anime, anime faces"
+            mode = "All Human Boys Mode"
+        elif key == ord('3'): #おばあちゃんモード
+            prompt = "masterpiece,high quality,(elder woman),a photo of female"
+            mode = "All Human Obaa-Chan Mode"
+        elif key == ord('4'): #おじいちゃんモード
+            prompt = "masterpiece,high quality,(elder man),a photo of male"
+            mode = "All Human Ojii-Chan Mode"
+        # StableDiffusion返還後画像を重ねる
+        cv.putText(image, mode,
+               (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)        
+        overlay_image = overlay_illust(image,posCX,posCY,sizeH)
 
         # 画面反映 #############################################################
         cv.imshow('MediaPipe Face Detection Demo', overlay_image)
@@ -134,8 +152,8 @@ def culculate_face_pos_and_size(image,detection):
     posCX = int(bbox.xmin * image_width + (sizeW/2)) #X中心座標
     posCY = int(bbox.ymin * image_height + (sizeH/2)) #Y中心座標
     
-    cv.putText(image, "posX:" + str(posX) + " posY:" + str(posY) + " sizeW" + str(sizeW) + " sizeH" + str(sizeH),
-               (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)
+    #cv.putText(image, "posX:" + str(posX) + " posY:" + str(posY) + " sizeW" + str(sizeW) + " sizeH" + str(sizeH),
+    #           (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)
     
     return image, posX, posY, posCX,posCY,sizeW,sizeH
 
