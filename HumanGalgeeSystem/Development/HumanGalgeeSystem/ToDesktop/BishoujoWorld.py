@@ -133,8 +133,9 @@ def main():
                (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)        
         overlay_image = overlay_illust(image,posCX,posCY,sizeH)
         # 画面反映 #############################################################
-        cv.imshow('MediaPipe Face Detection Demo', overlay_image)
-    
+        cv.namedWindow("window", cv.WINDOW_NORMAL)
+        cv.resizeWindow("window",1140,960)
+        cv.imshow("window", overlay_image)
     cap.release()
     cv.destroyAllWindows()
     
