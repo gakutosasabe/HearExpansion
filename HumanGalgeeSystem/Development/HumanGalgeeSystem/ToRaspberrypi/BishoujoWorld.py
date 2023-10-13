@@ -23,10 +23,7 @@ def conv_face2girl(api,prompt,faceimage):
     girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
     #cv.imwrite("girlimage.png", girlimage)
     girlimage.image.save("girlimage.png")
-
-    # 一定時間待つ
-    time.sleep(3)
-        
+    time.sleep(3)    
 
 
 def get_args():
@@ -62,7 +59,7 @@ def main():
     use_brect = args.use_brect
 
     # StableDiffusionのAPIのインスタンスを作成 ############################
-    api = webuiapi.WebUIApi(host='192.168.17.241', port=7860)
+    api = webuiapi.WebUIApi(host='192.168.0.18', port=7860)
     # カメラ準備　###############################################################
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
@@ -78,6 +75,7 @@ def main():
     cvFpsCalc = CvFpsCalc(buffer_len = 10)
 
     thread = None
+    mode = None
 
 
     while True:
@@ -108,7 +106,8 @@ def main():
                     thread = threading.Thread(target=conv_face2girl,args = (api,prompt,faceimage))
                     thread.start()
                
-            
+               # StableDiffusion返還後画像を重ねる
+                overlay_image = overlay_illust(image,posCX,posCY,sizeH)
     
         # キー処理(ESC：終了) #################################################
         key = cv.waitKey(1)
@@ -126,13 +125,14 @@ def main():
         elif key == ord('4'): #おじいちゃんモード
             prompt = "masterpiece,high quality,(elder man),a photo of male"
             mode = "All Human Ojii-Chan Mode"
-        # StableDiffusion返還後画像を重ねる
-        cv.putText(image, mode,
-               (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)        
-        overlay_image = overlay_illust(image,posCX,posCY,sizeH)
+        
+        cv.putText(overlay_image, mode,
+               (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)
 
         # 画面反映 #############################################################
-        cv.imshow('MediaPipe Face Detection Demo', overlay_image)
+        cv.namedWindow('demo', cv.WND_PROP_FULLSCREEN)
+        cv.setWindowProperty('demo',cv.WND_PROP_FULLSCREEN,cv.WINDOW_FULLSCREEN)
+        cv.imshow('demo', overlay_image)
     
     cap.release()
     cv.destroyAllWindows()
@@ -191,4 +191,5 @@ def trim_face(posX,posY,sizeW,sizeH,image):
 
 if __name__ == '__main__':
     main()
+
 
