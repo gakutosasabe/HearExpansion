@@ -23,7 +23,7 @@ def conv_face2girl(api,prompt,faceimage):
     girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.4)
     girlimage.image.save("girlimage.png")
     # 一定時間待つ
-    time.sleep(3)
+    time.sleep(1)
 
 
 def get_args():

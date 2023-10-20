@@ -23,7 +23,7 @@ def conv_face2girl(api,prompt,faceimage):
     girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
     #cv.imwrite("girlimage.png", girlimage)
     girlimage.image.save("girlimage.png")
-    time.sleep(3)    
+    time.sleep(1)    
 
 
 def get_args():
@@ -59,11 +59,12 @@ def main():
     use_brect = args.use_brect
 
     # StableDiffusionのAPIのインスタンスを作成 ############################
-    api = webuiapi.WebUIApi(host='192.168.0.18', port=7860)
+    api = webuiapi.WebUIApi(host='169.254.202.248', port=7860)
     # カメラ準備　###############################################################
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
+    cap.set(cv.CAP_PROP_BRIGHTNESS, 60)
 
     # モデルロード　###############################################################
     mp_face_detection = mp.solutions.face_detection
