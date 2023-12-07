@@ -15,5 +15,18 @@ def update_image(data):
     canvas.create_image(0,0,image = photo, anchor = tkinter.NW)
 
 
+def update_loop():
+    data = b""
+    while True:
+        data += client.recv(BUFSIZE) #クライアントからのデータを受信し、それをdataに追加する
+        if len(data) < 4: #4バイト以下なら待つ
+            continue
+        data_size = int.from_bytes(data[:4], "big") #最初の4バイトをデータサイズとして取り出す
+
+        buf = data[4:] #データサイズ以外のデータ
+        while True:
+            if len(buf)>data_size:
+                
+
 window = tkinter.Tk()
 canvas = tkinter.Canvas(window, width = 300, height = 300)
