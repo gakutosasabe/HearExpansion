@@ -20,7 +20,7 @@ from utils import CvFpsCalc
 def conv_face2girl(api,prompt,faceimage):
     # 画像を生成する
     # faceimage = Image.open("facetrim.png")
-    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.4)
+    girlimage = api.img2img(images = [faceimage], prompt=prompt, seed=5555, cfg_scale=6.5, denoising_strength=0.5)
     girlimage.image.save("girlimage.png")
     # 一定時間待つ
     time.sleep(1)
@@ -128,6 +128,9 @@ def main():
         elif key == ord('4'): #おじいちゃんモード
             prompt = "masterpiece,high quality,(elder man),a photo of male"
             mode = "All Human Ojii-Chan Mode"
+        elif key == ord('5'): #サイバーパンクモード
+            prompt = "masterpiece, best quality, high resolution, cyberpunk anime style, beautiful VTuber, upper body, highly detailed face, glowing red cybernetic eyes, short silver bob cut, futuristic bodysuit with neon lines, cyber neon background, soft lighting, smooth shading"
+            mode = "Cyberpunk Mode"
         # StableDiffusion返還後画像を重ねる
         cv.putText(image, mode,
                (10,30),cv.FONT_HERSHEY_SIMPLEX,1.0,(0,255,0),2,cv.LINE_AA)        
